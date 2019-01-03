@@ -1,0 +1,8 @@
+version: '2'
+services:
+  sphinx:
+    image: redislabs/redisgraph:1.0.8
+    ports:
+    - "127.0.0.1:56379:6379" # bind to local interface only!
+    volumes:
+    - ./redisgraph/data:/data # If persistence is enabled, data is stored in the VOLUME /data
