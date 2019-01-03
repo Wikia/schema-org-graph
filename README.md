@@ -7,7 +7,7 @@ Map articles metadata and relationship to schema.org entities and stores them in
 docker-compose up
 ```
 
-`redisgraph` binds to a local port `56379`:
+[`redisgraph`](https://oss.redislabs.com/redisgraph/) binds to a local port `56379`:
 
 ```
 redis-cli -p 56379
