@@ -163,12 +163,13 @@ class FootballWikiSource(WikiArticleSource):
                 model.add_relation('coach', 'Person:{}'.format(template.get_link('manager')))
 
                 # now, let's try to extract all players in the current squad
-                players = [
-                    template.get_link('name')
+                players_templates = [
+                    template
                     for template in self.get_templates() if template.get_name() == 'Fs player'
                 ]
 
-                for player in players:
-                    model.add_relation('athlete', 'Person:{}'.format(player))
+                for player in players_templates:
+                    model.add_relation('athlete', 'Person:{}'.format(
+                        player.get_link('name')), {'position': player['pos']})
 
                 yield model

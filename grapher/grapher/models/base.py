@@ -1,6 +1,7 @@
 """
 Base model
 """
+import json
 from collections import OrderedDict
 
 
@@ -47,12 +48,13 @@ class BaseModel(object):
         """
         return self.properties.get(key)
 
-    def add_relation(self, relation, target):
+    def add_relation(self, relation, target, properties=None):
         """
         :type relation str
         :type target str
+        :type properties dict
         """
-        self.relations.append((relation, target))
+        self.relations.append((relation, target, properties))
 
     def get_relation_targets(self, relation_type):
         """
@@ -70,7 +72,8 @@ class BaseModel(object):
         ret = '<{} https://schema.org/{} ({}) '.\
             format(self.__class__.__name__, self.get_type(), self.get_node_name())
 
-        # dump properties
+        # dump node properties
+        # (p:Person {name: 'Jennifer'})
         ret += ', '.join([
             '{} = "{}"'.format(key, value)
             for key, value in self.properties.items()
@@ -79,7 +82,9 @@ class BaseModel(object):
         ret += '>'
 
         # dump relations
-        for (relation, target) in self.relations:
-            ret += '\n\t--[:{}]->({})'.format(relation, target)
+        # -[rel:IS_FRIENDS_WITH {since: 2018}]->
+        for (relation, target, properties) in self.relations:
+            ret += '\n\t--[:{} {}]->({})'.format(
+                relation, json.dumps(properties or '').strip('" '), target)
 
         return ret
