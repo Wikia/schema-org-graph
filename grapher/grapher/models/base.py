@@ -14,12 +14,32 @@ class BaseModel(object):
         self.properties = OrderedDict()
         self.relations = list()
 
+    def get_type(self):
+        """
+        :rtype: str
+        """
+        return self.type
+
+    def get_name(self):
+        """
+        :rtype: str
+        """
+        return self.name
+
     def add_property(self, key, value):
         """
         :type key str
         :type value str|int|float
         """
-        self.properties[key] = value
+        if value is not None:
+            self.properties[key] = value
+
+    def get_property(self, key):
+        """
+        :type key str
+        :rtype: str|int|float|None
+        """
+        return self.properties.get(key)
 
     def add_relation(self, relation, target):
         """
@@ -28,8 +48,21 @@ class BaseModel(object):
         """
         self.relations.append((relation, target))
 
+    def get_relation_targets(self, relation_type):
+        """
+        :type relation_type str
+        :rtype: list[str]|None
+        """
+        found = [
+            target
+            for (relation, target) in self.relations if relation_type == relation
+        ]
+
+        return found if found else None
+
     def __repr__(self):
-        ret = '<{} https://schema.org/{} {} '.format(self.__class__.__name__, self.type, self.name)
+        ret = '<{} https://schema.org/{} "{}" '.\
+            format(self.__class__.__name__, self.get_type(), self.get_name())
 
         # dump properties
         ret += ', '.join([

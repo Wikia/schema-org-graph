@@ -114,7 +114,7 @@ class FootballWikiSource(WikiArticleSource):
     def get_models(self):
         for template in self.get_templates():
             if template.get_name() == 'Infobox Biography':
-                print(template)
+                # print(template)
 
                 model = PersonModel(name=template['fullname'])
 
