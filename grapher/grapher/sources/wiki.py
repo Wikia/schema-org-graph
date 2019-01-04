@@ -3,7 +3,7 @@ Takes data from Wikia's article
 """
 import json
 from . import BaseSource
-from ..models import PersonModel
+from ..models import BaseModel, PersonModel
 from ..utils import extract_year, extract_link, extract_links, extract_number
 
 
@@ -11,13 +11,21 @@ class Template(object):
     """
     Accessor for parameters of template
     """
-    def __init__(self, name, parameters):
+    def __init__(self, page_title, name, parameters):
         """
+        :type page_title str
         :type name str
         :type parameters dict
         """
+        self.page_title = page_title
         self.name = name
         self.parameters = parameters
+
+    def get_page_title(self):
+        """
+        :rtype: str
+        """
+        return self.page_title
 
     def get_name(self):
         """
@@ -100,8 +108,14 @@ class WikiArticleSource(BaseSource):
         """
         :rtype: list[Template]
         """
+        page_title = self.get_content_json()['title']
+
         for template in self.get_content_json().get('templates'):
-            yield Template(name=template['name'], parameters=template['parameters'])
+            yield Template(
+                page_title=page_title,
+                name=template['name'],
+                parameters=template['parameters']
+            )
 
     def get_models(self):
         super(WikiArticleSource, self).get_models()
@@ -114,6 +128,7 @@ class FootballWikiSource(WikiArticleSource):
     def get_models(self):
         for template in self.get_templates():
             if template.get_name() == 'Infobox Biography':
+                # https://schema.org/Person
                 # print(template)
 
                 model = PersonModel(name=template['fullname'])
@@ -125,10 +140,35 @@ class FootballWikiSource(WikiArticleSource):
 
                 # add relations
                 for club in template.get_links('clubs'):
-                    model.add_relation('athlete', club)
+                    model.add_relation('athlete', 'SportsTeam:{}'.format(club))
 
                 for club in template.get_links('managerclubs'):
-                    model.add_relation('coach', club)
+                    model.add_relation('coach', 'SportsTeam:{}'.format(club))
 
-                # return it
+                yield model
+
+            elif template.get_name() == 'Infobox Club':
+                # https://schema.org/SportsTeam
+                # print(template)
+
+                model = BaseModel(model_type='SportsTeam', name=template.get_page_title())
+                model.add_property('sport', 'Football')
+
+                model.add_property('foundingDate', template.get_year('founded'))
+                model.add_property('ground', template.get_link('ground'))
+                model.add_property('memberOf', template.get_link('lastleague'))
+                model.add_property('nationality', template.get_link('countryofbirth'))
+                model.add_property('url', template['website'])
+
+                model.add_relation('coach', 'Person:{}'.format(template.get_link('manager')))
+
+                # now, let's try to extract all players in the current squad
+                players = [
+                    template.get_link('name')
+                    for template in self.get_templates() if template.get_name() == 'Fs player'
+                ]
+
+                for player in players:
+                    model.add_relation('athlete', 'Person:{}'.format(player))
+
                 yield model

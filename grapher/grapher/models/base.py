@@ -26,6 +26,12 @@ class BaseModel(object):
         """
         return self.name
 
+    def get_node_name(self):
+        """
+        :rtype: str
+        """
+        return '{}:{}'.format(self.get_type(), self.get_name())
+
     def add_property(self, key, value):
         """
         :type key str
@@ -61,8 +67,8 @@ class BaseModel(object):
         return found if found else None
 
     def __repr__(self):
-        ret = '<{} https://schema.org/{} "{}" '.\
-            format(self.__class__.__name__, self.get_type(), self.get_name())
+        ret = '<{} https://schema.org/{} ({}) '.\
+            format(self.__class__.__name__, self.get_type(), self.get_node_name())
 
         # dump properties
         ret += ', '.join([
@@ -74,6 +80,6 @@ class BaseModel(object):
 
         # dump relations
         for (relation, target) in self.relations:
-            ret += '\n\t--> {} --> {}'.format(relation, target).rstrip()
+            ret += '\n\t--[:{}]->({})'.format(relation, target)
 
         return ret

@@ -19,10 +19,11 @@ def test_template():
     fixture = read_fixture('ole_gunnar.json')
     data = json.loads(fixture)['templates'][0]
 
-    template = Template(name=data['name'], parameters=data['parameters'])
+    template = Template(page_title='The page', name=data['name'], parameters=data['parameters'])
     print(template)
 
     # simple accessor
+    assert template.get_page_title() == 'The page'
     assert template.get_name() == 'Infobox Biography'
     assert template['cityofbirth'] == 'Kristiansund', 'Parameter value should be trimmed'
     assert template['clubnumber'] == '', 'Empty parameter should return an empty string'
@@ -66,8 +67,8 @@ def test_ole_gunnar():
     assert ole.get_property('height') == 1.78
     assert ole.get_property('foo') is None
 
-    assert ole.get_relation_targets('athlete') == ['Clausenengen FK', 'Molde FK', 'Manchester United F.C.']
-    assert ole.get_relation_targets('coach') == ['Manchester United F.C. Reserves and Academy', 'Molde FK', 'Cardiff City F.C.', 'Molde FK', 'Manchester United F.C.']
+    assert ole.get_relation_targets('athlete') == ['SportsTeam:Clausenengen FK', 'SportsTeam:Molde FK', 'SportsTeam:Manchester United F.C.']
+    assert ole.get_relation_targets('coach') == ['SportsTeam:Manchester United F.C. Reserves and Academy', 'SportsTeam:Molde FK', 'SportsTeam:Cardiff City F.C.', 'SportsTeam:Molde FK', 'SportsTeam:Manchester United F.C.']
 
     assert ole.get_relation_targets('foo') is None
 
@@ -91,5 +92,32 @@ def test_allegri():
     assert coach.get_property('nationality') == 'Italy'
     assert coach.get_property('height') == 1.83
 
-    assert coach.get_relation_targets('athlete')[-1] == 'Aglianese Calcio 1923'
-    assert coach.get_relation_targets('coach')[-1] == 'Juventus F.C.'
+    assert coach.get_relation_targets('athlete')[-1] == 'SportsTeam:Aglianese Calcio 1923'
+    assert coach.get_relation_targets('coach')[-1] == 'SportsTeam:Juventus F.C.'
+
+
+def test_manchester_united():
+    fixture = read_fixture('manchester_united.json')
+    source = FootballWikiSource()
+    source.set_content(fixture)
+
+    models = list(source.get_models())
+    assert len(models) == 1
+
+    team = models[0]
+    print(team)
+
+    assert team.get_type() == 'SportsTeam'
+    assert team.get_name() == 'Manchester United F.C.', 'name should be taken from page title to allow proper linking'
+
+    assert team.get_property('sport') == "Football"
+    assert team.get_property('foundingDate') == 1878
+    assert team.get_property('ground') == 'Old Trafford'
+    assert team.get_property('memberOf') == 'Premier League'
+    assert team.get_property('url') == 'http://www.manutd.com/'
+
+    assert team.get_relation_targets('coach') == ['Person:Ole Gunnar Solskjær']
+
+    assert len(team.get_relation_targets('athlete')) == 29
+    assert team.get_relation_targets('athlete')[0] == 'Person:David de Gea'
+    assert team.get_relation_targets('athlete')[-1] == 'Person:Joel Castro Pereira'
