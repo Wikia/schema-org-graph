@@ -20,9 +20,9 @@ def test_extract_links():
 
 
 def test_extract_year():
-    assert extract_year(' Birth date and age19730226df=y ') == '1973'
-    assert extract_year(' 19 May 1917 ') == '1917'
-    assert extract_year(' 1984 ') == '1984'
+    assert extract_year(' Birth date and age19730226df=y ') == 1973
+    assert extract_year(' 19 May 1917 ') == 1917
+    assert extract_year(' 1984 ') == 1984
 
     assert extract_year(' 12 july ') is None
     assert extract_year(' 12abcd34 ') is None
@@ -37,4 +37,4 @@ def test_extract_number():
 
     assert extract_number(' heightm=1.78 ') == 1.78
 
-    assert extract_year(' abc ') is None
+    assert extract_number(' abc ') is None

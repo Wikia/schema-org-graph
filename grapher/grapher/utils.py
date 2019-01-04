@@ -27,11 +27,11 @@ def extract_links(text):
 def extract_year(text):
     """
     :type text str
-    :rtype: str|None
+    :rtype: int|None
     """
     match = re.search(r'\d{4}', text)
 
-    return match.group(0) if match else None
+    return int(match.group(0)) if match else None
 
 
 def extract_number(text):
@@ -48,4 +48,4 @@ def extract_number(text):
 
         return int(value)
 
-    return False
+    return None

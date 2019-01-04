@@ -7,6 +7,65 @@ from ..models import PersonModel
 from ..utils import extract_year, extract_link, extract_links, extract_number
 
 
+class Template(object):
+    """
+    Accessor for parameters of template
+    """
+    def __init__(self, name, parameters):
+        """
+        :type name str
+        :type parameters dict
+        """
+        self.name = name
+        self.parameters = parameters
+
+    def get_name(self):
+        """
+        :rtype: str
+        """
+        return self.name
+
+    def get_year(self, item):
+        """
+        :rtype: int|None
+        """
+        return extract_year(self[item]) if self[item] else None
+
+    def get_number(self, item):
+        """
+        :rtype: int|float|None
+        """
+        return extract_number(self[item]) if self[item] else None
+
+    def get_link(self, item):
+        """
+        :rtype: str|None
+        """
+        return extract_link(self[item]) if self[item] else None
+
+    def get_links(self, item):
+        """
+        :rtype: list[str]
+        """
+        return extract_links(self[item]) if self[item] else []
+
+    def __getitem__(self, item):
+        """
+        :rtype: str|int|float|None
+        """
+        value = self.parameters.get(item)
+
+        # remove trailing whitespaces from string values
+        if isinstance(value, str):
+            return value.strip()
+
+        return value
+
+    def __repr__(self):
+        return '<Template {} {}>'.format(
+            self.name, json.dumps(self.parameters, indent=True, sort_keys=True))
+
+
 class WikiArticleSource(BaseSource):
     """
     All wiki-specific sources should inherit from this class
@@ -39,10 +98,10 @@ class WikiArticleSource(BaseSource):
 
     def get_templates(self):
         """
-        :rtype: list[dict]
+        :rtype: list[Template]
         """
         for template in self.get_content_json().get('templates'):
-            yield template
+            yield Template(name=template['name'], parameters=template['parameters'])
 
     def get_models(self):
         super(WikiArticleSource, self).get_models()
@@ -54,11 +113,8 @@ class FootballWikiSource(WikiArticleSource):
     """
     def get_models(self):
         for template in self.get_templates():
-            template_name = template['name']
-            template_parameters = template['parameters']
-
-            if template_name == 'Infobox Biography':
-                print(json.dumps(template_parameters, indent=True, sort_keys=True))
+            if template.get_name() == 'Infobox Biography':
+                print(template)
 
                 model = PersonModel(name=template_parameters['fullname'])
 
