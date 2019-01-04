@@ -45,7 +45,7 @@ def extract_number(text):
         value = match.group(0)
         if '.' in value:
             return float(value)
-        else:
-            return int(value)
-    else:
-        return False
+
+        return int(value)
+
+    return False

@@ -44,6 +44,9 @@ class WikiArticleSource(BaseSource):
         for template in self.get_content_json().get('templates'):
             yield template
 
+    def get_models(self):
+        super(WikiArticleSource, self).get_models()
+
 
 class FootballWikiSource(WikiArticleSource):
     """
@@ -61,7 +64,8 @@ class FootballWikiSource(WikiArticleSource):
 
                 model.add_property('birthDate', extract_year(template_parameters['dateofbirth']))
                 model.add_property('birthPlace', template_parameters['cityofbirth'])
-                model.add_property('nationality', extract_link(template_parameters['countryofbirth']))
+                model.add_property('nationality',
+                                   extract_link(template_parameters['countryofbirth']))
                 model.add_property('height', extract_number(template_parameters['height']))  # [m]
 
                 # add relations

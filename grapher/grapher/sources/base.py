@@ -3,8 +3,6 @@ Base source class
 """
 import logging
 
-from ..models.base import BaseModel
-
 
 class BaseSource(object):
     """
@@ -15,6 +13,7 @@ class BaseSource(object):
 
     def get_models(self):
         """
-        :rtype: list[BaseModel]
+        :rtype: list[grapher.models.base.BaseModel]
         """
-        raise NotImplementedError("%s.get_models() needs to be implemented" % self.__class__.__name__)
+        raise NotImplementedError("%s.get_models() needs to be implemented" %
+                                  self.__class__.__name__)
