@@ -68,6 +68,12 @@ class BaseModel(object):
 
         return found if found else None
 
+    def get_all_relations(self):
+        """
+        :rtype: list[tuple]
+        """
+        return self.relations
+
     def __repr__(self):
         ret = '<{} https://schema.org/{} ({}) '.\
             format(self.__class__.__name__, self.get_type(), self.get_node_name())

@@ -139,10 +139,10 @@ class FootballWikiSource(WikiArticleSource):
                 model.add_property('height', template.get_number('height'))  # [m]
 
                 # add relations
-                for club in template.get_links('clubs'):
+                for club in template.get_links('clubs') or []:
                     model.add_relation('athlete', 'SportsTeam:{}'.format(club))
 
-                for club in template.get_links('managerclubs'):
+                for club in template.get_links('managerclubs') or []:
                     model.add_relation('coach', 'SportsTeam:{}'.format(club))
 
                 yield model
@@ -169,7 +169,17 @@ class FootballWikiSource(WikiArticleSource):
                 ]
 
                 for player in players_templates:
-                    model.add_relation('athlete', 'Person:{}'.format(
-                        player.get_link('name')), {'position': player['pos']})
+                    # name is not always a link
+                    player_name = player.get_link('name') or player['name']
+
+                    if player_name:
+                        model.add_relation(
+                            'athlete',
+                            'Person:{}'.format(player_name),
+                            {'position': player['pos']}
+                        )
+                    else:
+                        self.logger.error('%s returned an empty player name (for %s)',
+                                          player, model.get_node_name())
 
                 yield model
