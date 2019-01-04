@@ -18,7 +18,13 @@ setup(
         ]
     },
     install_requires=[
+        'mwclient==0.9.3',
         'redisgraph==1.5',
         'requests==2.21.0',
-    ]
+    ],
+    entry_points={
+        'console_scripts': [
+            'index_football_wiki=grapher.scripts.index_football_wiki:index',
+        ],
+    }
 )
