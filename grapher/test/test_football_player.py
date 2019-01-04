@@ -96,6 +96,30 @@ def test_allegri():
     assert coach.get_relation_targets('coach')[-1] == 'SportsTeam:Juventus F.C.'
 
 
+def test_zlatan():
+    fixture = read_fixture('zlatan.json')
+    source = FootballWikiSource()
+    source.set_content(fixture)
+
+    models = list(source.get_models())
+    assert len(models) == 1
+
+    coach = models[0]
+    print(coach)
+
+    assert coach.get_type() == 'Person'
+    assert coach.get_name() == 'Zlatan Ibrahimović'
+
+    assert coach.get_property('birthDate') == 1981
+    assert coach.get_property('birthPlace') == 'Malmö'
+    assert coach.get_property('nationality') == 'Sweden'
+    assert coach.get_property('height') == 1.95
+
+    assert coach.get_relation_targets('athlete')[0] == 'SportsTeam:Malmö FF'
+    assert coach.get_relation_targets('athlete')[-1] == 'SportsTeam:LA Galaxy'
+    assert coach.get_relation_targets('coach') is None
+
+
 def test_manchester_united():
     fixture = read_fixture('manchester_united.json')
     source = FootballWikiSource()
