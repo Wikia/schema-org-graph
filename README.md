@@ -1,4 +1,7 @@
 # schema-org-graph
+
+[![Build Status](https://travis-ci.com/Wikia/schema-org-graph.svg?branch=master)](https://travis-ci.com/Wikia/schema-org-graph)
+
 Map articles metadata and relationship to schema.org entities and stores them in graph database
 
 ## Run it
