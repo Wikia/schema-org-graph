@@ -29,11 +29,17 @@ class BaseModel(object):
         self.relations.append((relation, target))
 
     def __repr__(self):
-        ret = '<{} https://schema.org/{} {}>'.format(self.__class__.__name__, self.type, self.name)
+        ret = '<{} https://schema.org/{} {} '.format(self.__class__.__name__, self.type, self.name)
 
-        for key, value in self.properties.items():
-            ret += '\n\t{}: {}'.format(key, value).rstrip()
+        # dump properties
+        ret += ', '.join([
+            '{} = "{}"'.format(key, value)
+            for key, value in self.properties.items()
+        ])
 
+        ret += '>'
+
+        # dump relations
         for (relation, target) in self.relations:
             ret += '\n\t--> {} --> {}'.format(relation, target).rstrip()
 

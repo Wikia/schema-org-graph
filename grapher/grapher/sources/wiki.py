@@ -116,19 +116,18 @@ class FootballWikiSource(WikiArticleSource):
             if template.get_name() == 'Infobox Biography':
                 print(template)
 
-                model = PersonModel(name=template_parameters['fullname'])
+                model = PersonModel(name=template['fullname'])
 
-                model.add_property('birthDate', extract_year(template_parameters['dateofbirth']))
-                model.add_property('birthPlace', template_parameters['cityofbirth'])
-                model.add_property('nationality',
-                                   extract_link(template_parameters['countryofbirth']))
-                model.add_property('height', extract_number(template_parameters['height']))  # [m]
+                model.add_property('birthDate', template.get_year('dateofbirth'))
+                model.add_property('birthPlace', template['cityofbirth'])
+                model.add_property('nationality', template.get_link('countryofbirth'))
+                model.add_property('height', template.get_number('height'))  # [m]
 
                 # add relations
-                for club in extract_links(template_parameters['clubs']):
+                for club in template.get_links('clubs'):
                     model.add_relation('athlete', club)
 
-                for club in extract_links(template_parameters['managerclubs']):
+                for club in template.get_links('managerclubs'):
                     model.add_relation('coach', club)
 
                 # return it
