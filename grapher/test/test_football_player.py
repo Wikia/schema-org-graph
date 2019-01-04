@@ -119,5 +119,5 @@ def test_manchester_united():
     assert team.get_relation_targets('coach') == ['Person:Ole Gunnar Solskjær']
 
     assert len(team.get_relation_targets('athlete')) == 29
-    assert team.get_relation_targets('athlete')[0] == 'Person:David de Gea'
-    assert team.get_relation_targets('athlete')[-1] == 'Person:Joel Castro Pereira'
+    assert team.get_relation_targets('athlete')[0] == ('Person:David de Gea', {'position': 'GK'}), 'This relation should have a property'
+    assert team.get_relation_targets('athlete')[2] == ('Person:Eric Bailly', {'position': 'DF'}), 'This relation should have a property'

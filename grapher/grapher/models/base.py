@@ -62,8 +62,8 @@ class BaseModel(object):
         :rtype: list[str]|None
         """
         found = [
-            target
-            for (relation, target) in self.relations if relation_type == relation
+            (target, properties) if properties is not None else target
+            for (relation, target, properties) in self.relations if relation_type == relation
         ]
 
         return found if found else None
