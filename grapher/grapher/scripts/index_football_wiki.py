@@ -1,12 +1,16 @@
 """
 This script takes data from football.wikia.com and loads into RedisGraph database
 """
-import json
 import logging
+from os import path
 
 import requests
+from data_flow_graph import format_graphviz_lines
 from mwclient.client import Site
 from grapher.sources.wiki import WikiArticleSource, FootballWikiSource
+
+# where graphs will be stored
+OUTPUT_DIRECTORY = path.join(path.dirname(__file__), '../../output/')
 
 # http://football.sandbox-s6.wikia.com/api/v1/Templates/Metadata?title=Zlatan_Ibrahimovi%C4%87
 WIKI_DOMAIN = 'football.sandbox-s6.wikia.com'
@@ -45,8 +49,10 @@ class Wiki(object):
         category = self.site.categories[category_name]
         count = 0
         for page in category:
-            count += 1
-            yield page.name
+            # only NS_MAIN pages
+            if page.namespace == 0:
+                count += 1
+                yield page.name
 
         self.logger.info('Returned %d pages', count)
 
@@ -72,24 +78,46 @@ class Wiki(object):
 
 
 def index():
+    """
+    Index football.wikia.com
+    """
     logger = logging.getLogger('index')
-    logger.info('Running %s', __file__)
+    logger.info('Script: %s', __file__)
+    logger.info('Output: %s', OUTPUT_DIRECTORY)
 
     wiki = Wiki(WIKI_DOMAIN)
 
     # get pages in categories we're interested in
     pages = []
     for category in CATEGORIES:
-        pages += list(wiki.pages_in_category(category))
+        pages += wiki.pages_in_category(category)
 
     # get and parse templates
-    logger.info("Will index %d pages", len(pages))
+    logger.info("Will create models from %d pages", len(pages))
 
     models = []
-    for page in pages[:10]:
+    for page in pages:
         models += wiki.get_models_from_page(page, source=FootballWikiSource())
 
-    print(models)
+    logger.info("%d models were created from pages", len(models))
+    # print([model.get_node_name() for model in models])
 
-    logger.info("%d models were index", len(models))
+    # ok, now generate dot file
+    lines = []
+
+    for model in models:
+        # render each relation as an edge in dot file (graphviz format)
+        # https://github.com/macbre/data-flow-graph
+        for (relation, target, _) in model.get_all_relations():
+            lines.append({
+                'source': model.get_node_name(),
+                'metadata': relation,
+                'target': target
+            })
+
+    logger.info("Saving %d edges to dot file", len(lines))
+
+    with open(OUTPUT_DIRECTORY + '/football.dot', 'wt') as dot_file:
+        dot_file.writelines(format_graphviz_lines(lines))
+
     logger.info('Done')
