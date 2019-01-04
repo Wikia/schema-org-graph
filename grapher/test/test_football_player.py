@@ -70,3 +70,26 @@ def test_ole_gunnar():
     assert ole.get_relation_targets('coach') == ['Manchester United F.C. Reserves and Academy', 'Molde FK', 'Cardiff City F.C.', 'Molde FK', 'Manchester United F.C.']
 
     assert ole.get_relation_targets('foo') is None
+
+
+def test_allegri():
+    fixture = read_fixture('massimiliano_allegri.json')
+    source = FootballWikiSource()
+    source.set_content(fixture)
+
+    models = list(source.get_models())
+    assert len(models) == 1
+
+    coach = models[0]
+    print(coach)
+
+    assert coach.get_type() == 'Person'
+    assert coach.get_name() == 'Massimiliano Allegri'
+
+    assert coach.get_property('birthDate') == 1967
+    assert coach.get_property('birthPlace') == 'Livorno'
+    assert coach.get_property('nationality') == 'Italy'
+    assert coach.get_property('height') == 1.83
+
+    assert coach.get_relation_targets('athlete')[-1] == 'Aglianese Calcio 1923'
+    assert coach.get_relation_targets('coach')[-1] == 'Juventus F.C.'
