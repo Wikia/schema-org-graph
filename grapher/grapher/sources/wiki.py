@@ -4,7 +4,7 @@ Takes data from Wikia's article
 import json
 from . import BaseSource
 from ..models import PersonModel
-from ..utils import extract_year, extract_link, extract_links
+from ..utils import extract_year, extract_link, extract_links, extract_number
 
 
 class WikiArticleSource(BaseSource):
@@ -57,10 +57,12 @@ class FootballWikiSource(WikiArticleSource):
             if template_name == 'Infobox Biography':
                 print(json.dumps(template_parameters, indent=True, sort_keys=True))
 
-                model = PersonModel(
-                    name=template_parameters['fullname'],
-                    birth_date=extract_year(template_parameters['dateofbirth'])
-                )
+                model = PersonModel(name=template_parameters['fullname'])
+
+                model.add_property('birthDate', extract_year(template_parameters['dateofbirth']))
+                model.add_property('birthPlace', template_parameters['cityofbirth'])
+                model.add_property('nationality', extract_link(template_parameters['countryofbirth']))
+                model.add_property('height', extract_number(template_parameters['height']))  # [m]
 
                 # add relations
                 for club in extract_links(template_parameters['clubs']):

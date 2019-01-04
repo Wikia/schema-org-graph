@@ -5,8 +5,9 @@ from collections import OrderedDict
 
 
 class BaseModel(object):
-    def __init__(self, schema):
-        self.schema = schema
+    def __init__(self, model_type, name):
+        self.type = model_type
+        self.name = name
         self.properties = OrderedDict()
         self.relations = list()
 
@@ -17,7 +18,7 @@ class BaseModel(object):
         self.relations.append((key, target))
 
     def __repr__(self):
-        ret = '<{} {}>'.format(self.__class__.__name__, self.schema)
+        ret = '<{} https://schema.org/{} {}>'.format(self.__class__.__name__, self.type, self.name)
 
         for key, value in self.properties.items():
             ret += '\n\t{}: {}'.format(key, value).rstrip()

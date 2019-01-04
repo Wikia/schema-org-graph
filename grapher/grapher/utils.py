@@ -9,7 +9,7 @@ def extract_link(text):
     :type text str
     :rtype: str|None
     """
-    matches = re.findall(r'\[\[([^\]|]+)', text)
+    matches = extract_links(text)
 
     return matches[0] if matches else None
 
@@ -32,3 +32,20 @@ def extract_year(text):
     match = re.search(r'\d{4}', text)
 
     return match.group(0) if match else None
+
+
+def extract_number(text):
+    """
+    :type text str
+    :rtype: int|float|None
+    """
+    match = re.search(r'[0-9.,]+', text)
+
+    if match:
+        value = match.group(0)
+        if '.' in value:
+            return float(value)
+        else:
+            return int(value)
+    else:
+        return False
