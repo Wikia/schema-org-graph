@@ -4,10 +4,15 @@ This script takes data from football.wikia.com and loads into RedisGraph databas
 import logging
 from os import path
 
+import redis
 import requests
+
 from data_flow_graph import format_graphviz_lines
 from mwclient.client import Site
 from grapher.sources.wiki import WikiArticleSource, FootballWikiSource
+
+# for RedisGraph
+from redisgraph import Node, Edge, Graph
 
 # where graphs will be stored
 OUTPUT_DIRECTORY = path.join(path.dirname(__file__), '../../output/')
@@ -77,6 +82,102 @@ class Wiki(object):
         return source.get_models()
 
 
+class BaseGraph(object):
+    """
+    Represents a collection of nodes (model objects) and relations (edges) between them
+    """
+    def __init__(self):
+        self.models = list()
+        self.logger = logging.getLogger(self.__class__.__name__)
+
+    def add(self, model):
+        """
+        :type model grapher.models.BaseModel
+        """
+        self.models.append(model)
+
+    def store(self, graph_name):
+        """
+        Save a given graph
+        """
+        raise NotImplementedError('store methods needs to be implemented')
+
+
+class RedisGraph(BaseGraph):
+    """
+    Handles storing a collection of models in RedisGraph
+    """
+    def __init__(self, host, port=6379):
+        """
+        :type host str
+        :type port int
+        """
+        super(RedisGraph, self).__init__()
+
+        self.host = host
+        self.port = port
+
+        self.logger.info('Using redis: %s:%d', host, port)
+
+    @staticmethod
+    def model_to_node(model):
+        """
+        :type model grapher.models.BaseModel
+        :rtype: Node
+        """
+        properties = dict(name=model.get_name())
+        properties.update(model.properties)
+
+        return Node(
+            alias=model.get_node_name(),
+            label=model.get_type(),
+            properties=properties,
+        )
+
+    @staticmethod
+    def model_to_edges(model):
+        """
+        :type model grapher.models.BaseModel
+        :rtype: list[Edge]
+        """
+        for (relation, target, properties) in model.get_all_relations():
+            # Edge(john, 'visited', japan, properties={'purpose': 'pleasure'})
+            yield Edge(
+                src_node=Node(alias=model.get_node_name()),
+                relation=relation,
+                dest_node=Node(alias=target),
+                properties=properties
+            )
+
+    def store(self, graph_name):
+        """
+        :type graph_name str
+        """
+        # https://github.com/RedisLabs/redisgraph-py#example-using-the-python-client
+        redis_graph = Graph(
+            name=graph_name,
+            redis_con=redis.Redis(self.host, self.port)
+        )
+
+        # add all nodes and edges
+        for model in self.models:
+            redis_graph.add_node(self.model_to_node(model))
+
+            for edge in self.model_to_edges(model):
+                try:
+                    redis_graph.add_edge(edge)
+                except KeyError as ex:
+                    # graph can be not complete, some nodes can be missing despite the relation
+                    self.logger.error('Node not found when adding an edge: {}'.format(ex))
+
+        # and save it
+        self.logger.info('Committing graph with %d nodes and %s edges',
+                         len(redis_graph.nodes), len(redis_graph.edges))
+
+        redis_graph.commit()
+        self.logger.info('Committed')
+
+
 def index():
     """
     Index football.wikia.com
@@ -96,11 +197,18 @@ def index():
     logger.info("Will create models from %d pages", len(pages))
 
     models = []
-    for page in pages:
+    for page in pages[:5]:
         models += wiki.get_models_from_page(page, source=FootballWikiSource())
 
     logger.info("%d models were created from pages", len(models))
     # print([model.get_node_name() for model in models])
+
+    # store graph in RedisGraph
+    graph = RedisGraph(host='localhost', port=56379)
+    for model in models:
+        graph.add(model)
+
+    graph.store('football')
 
     # ok, now generate dot file
     lines = []
