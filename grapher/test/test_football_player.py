@@ -61,7 +61,7 @@ def test_ole_gunnar():
     ole = models[0]
     print(ole)
 
-    assert ole.get_node_name() == 'Ole Gunnar Solskjær:Person'
+    assert ole.get_node_name() == 'Ole_Gunnar_Solskj_r:Person'
     assert ole.get_type() == 'Person'
     assert ole.get_name() == 'Ole Gunnar Solskjær'
 
@@ -71,8 +71,8 @@ def test_ole_gunnar():
     assert ole.get_property('height') == 1.78
     assert ole.get_property('foo') is None
 
-    assert ole.get_relation_targets('athlete') == ['Clausenengen FK:SportsTeam', 'Molde FK:SportsTeam', 'Manchester United F.C.:SportsTeam']
-    assert ole.get_relation_targets('coach') == ['Manchester United F.C. Reserves and Academy:SportsTeam', 'Molde FK:SportsTeam', 'Cardiff City F.C.:SportsTeam', 'Molde FK:SportsTeam', 'Manchester United F.C.:SportsTeam']
+    assert ole.get_relation_targets('athlete') == ['Clausenengen_FK:SportsTeam', 'Molde_FK:SportsTeam', 'Manchester_United_F_C:SportsTeam']
+    assert ole.get_relation_targets('coach') == ['Manchester_United_F_C_Reserves_and_Academy:SportsTeam', 'Molde_FK:SportsTeam', 'Cardiff_City_F_C:SportsTeam', 'Molde_FK:SportsTeam', 'Manchester_United_F_C:SportsTeam']
 
     assert ole.get_relation_targets('foo') is None
 
@@ -88,6 +88,7 @@ def test_allegri():
     coach = models[0]
     print(coach)
 
+    assert coach.get_node_name() == 'Massimiliano_Allegri:Person'
     assert coach.get_type() == 'Person'
     assert coach.get_name() == 'Massimiliano Allegri'
 
@@ -96,8 +97,8 @@ def test_allegri():
     assert coach.get_property('nationality') == 'Italy'
     assert coach.get_property('height') == 1.83
 
-    assert coach.get_relation_targets('athlete')[-1] == 'Aglianese Calcio 1923:SportsTeam'
-    assert coach.get_relation_targets('coach')[-1] == 'Juventus F.C.:SportsTeam'
+    assert coach.get_relation_targets('athlete')[-1] == 'Aglianese_Calcio_1923:SportsTeam'
+    assert coach.get_relation_targets('coach')[-1] == 'Juventus_F_C:SportsTeam'
 
 
 def test_zlatan():
@@ -108,20 +109,21 @@ def test_zlatan():
     models = list(source.get_models())
     assert len(models) == 1
 
-    coach = models[0]
-    print(coach)
+    zlatan = models[0]
+    print(zlatan)
 
-    assert coach.get_type() == 'Person'
-    assert coach.get_name() == 'Zlatan Ibrahimović'
+    assert zlatan.get_node_name() == 'Zlatan_Ibrahimovi:Person'
+    assert zlatan.get_type() == 'Person'
+    assert zlatan.get_name() == 'Zlatan Ibrahimović'
 
-    assert coach.get_property('birthDate') == 1981
-    assert coach.get_property('birthPlace') == 'Malmö'
-    assert coach.get_property('nationality') == 'Sweden'
-    assert coach.get_property('height') == 1.95
+    assert zlatan.get_property('birthDate') == 1981
+    assert zlatan.get_property('birthPlace') == 'Malmö'
+    assert zlatan.get_property('nationality') == 'Sweden'
+    assert zlatan.get_property('height') == 1.95
 
-    assert coach.get_relation_targets('athlete')[0] == 'Malmö FF:SportsTeam'
-    assert coach.get_relation_targets('athlete')[-1] == 'LA Galaxy:SportsTeam'
-    assert coach.get_relation_targets('coach') is None
+    assert zlatan.get_relation_targets('athlete')[0] == 'Malm_FF:SportsTeam'
+    assert zlatan.get_relation_targets('athlete')[-1] == 'LA_Galaxy:SportsTeam'
+    assert zlatan.get_relation_targets('coach') is None
 
 
 def test_manchester_united():
@@ -135,7 +137,7 @@ def test_manchester_united():
     team = models[0]
     print(team)
 
-    assert team.get_node_name() == 'Manchester United F.C.:SportsTeam'
+    assert team.get_node_name() == 'Manchester_United_F_C:SportsTeam'
     assert team.get_type() == 'SportsTeam'
     assert team.get_name() == 'Manchester United F.C.', 'name should be taken from page title to allow proper linking'
 
@@ -145,8 +147,8 @@ def test_manchester_united():
     assert team.get_property('memberOf') == 'Premier League'
     assert team.get_property('url') == 'http://www.manutd.com/'
 
-    assert team.get_relation_targets('coach') == ['Ole Gunnar Solskjær:Person']
+    assert team.get_relation_targets('coach') == ['Ole_Gunnar_Solskj_r:Person']
 
     assert len(team.get_relation_targets('athlete')) == 29
-    assert team.get_relation_targets('athlete')[0] == ('David de Gea:Person', {'number': 1, 'position': 'GK'}), 'This relation should have a property'
-    assert team.get_relation_targets('athlete')[2] == ('Eric Bailly:Person', {'number': 3, 'position': 'DF'}), 'This relation should have a property'
+    assert team.get_relation_targets('athlete')[0] == ('David_de_Gea:Person', {'number': 1, 'position': 'GK'}), 'This relation should have a property'
+    assert team.get_relation_targets('athlete')[2] == ('Eric_Bailly:Person', {'number': 3, 'position': 'DF'}), 'This relation should have a property'

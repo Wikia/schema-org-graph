@@ -130,7 +130,6 @@ class RedisGraph(BaseGraph):
 
         return Node(
             alias=model.get_node_name(),
-            label=model.get_type(),
             properties=properties,
         )
 
@@ -168,7 +167,7 @@ class RedisGraph(BaseGraph):
                     redis_graph.add_edge(edge)
                 except KeyError as ex:
                     # graph can be not complete, some nodes can be missing despite the relation
-                    self.logger.error('Node not found when adding an edge: {}'.format(ex))
+                    self.logger.error('Node not found when adding an edge: %s', ex)
 
         # and save it
         self.logger.info('Committing graph with %d nodes and %s edges',
@@ -193,11 +192,13 @@ def index():
     for category in CATEGORIES:
         pages += wiki.pages_in_category(category)
 
+    pages = sorted(pages)
+
     # get and parse templates
     logger.info("Will create models from %d pages", len(pages))
 
     models = []
-    for page in pages[:5]:
+    for page in pages[:25]:
         models += wiki.get_models_from_page(page, source=FootballWikiSource())
 
     logger.info("%d models were created from pages", len(models))

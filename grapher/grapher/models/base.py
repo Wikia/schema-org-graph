@@ -2,6 +2,7 @@
 Base model
 """
 import json
+import re
 from collections import OrderedDict
 
 
@@ -12,7 +13,7 @@ class BaseModel(object):
     def __init__(self, model_type, name):
         self.type = model_type
         self.name = name
-        self.properties = OrderedDict()
+        self.properties = OrderedDict(name=name)
         self.relations = list()
 
     def get_type(self):
@@ -27,13 +28,29 @@ class BaseModel(object):
         """
         return self.name
 
+    @staticmethod
+    def encode_name(name):
+        """
+        :type name str
+        :rtype: str
+        """
+        # Must begin with an alphabetic letter
+        # Can contain numbers, but not as the first character
+        # Cannot contain symbols (an exception to this rule is using underscore)
+        #
+        # https://neo4j.com/docs/cypher-manual/current/syntax/naming/
+        return re.sub(r'[^a-z0-9]+', '_', name, flags=re.IGNORECASE).strip('_')
+
     def get_node_name(self):
         """
         Return node name for using in Cypher queries, e.g. "Foo:Type"
 
         :rtype: str
         """
-        return '{}:{}'.format(self.get_name(), self.get_type())
+        return '{}:{}'.format(
+            self.encode_name(self.get_name()),
+            self.encode_name(self.get_type())
+        )
 
     def add_property(self, key, value):
         """
