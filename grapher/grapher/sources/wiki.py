@@ -117,6 +117,16 @@ class WikiArticleSource(BaseSource):
                 parameters=template['parameters']
             )
 
+    def get_templates_of_type(self, template_type):
+        """
+        :type template_type str
+        :rtype: list[Template]
+        """
+        return [
+            template
+            for template in self.get_templates() if template.get_name() == template_type
+        ]
+
     def get_models(self):
         super(WikiArticleSource, self).get_models()
 
@@ -164,21 +174,20 @@ class FootballWikiSource(WikiArticleSource):
                     name=template.get_link('manager')).get_node_name())
 
                 # now, let's try to extract all players in the current squad
-                players_templates = [
-                    template
-                    for template in self.get_templates() if template.get_name() == 'Fs player'
-                ]
-
-                for player in players_templates:
+                for player in self.get_templates_of_type(template_type='Fs player'):
                     # name is not always a link
                     player_name = player.get_link('name') or player['name']
 
                     if player_name:
-                        model.add_relation(
-                            'athlete',
-                            PersonModel(player_name).get_node_name(),
-                            {'position': player['pos']}
-                        )
+                        number = player.get_number('no')
+                        position = player['pos']
+
+                        if number and position:
+                            model.add_relation(
+                                'athlete',
+                                PersonModel(player_name).get_node_name(),
+                                {'position': position, 'number': number}
+                            )
                     else:
                         self.logger.error('%s returned an empty player name (for %s)',
                                           player, model.get_node_name())

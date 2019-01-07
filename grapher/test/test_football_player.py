@@ -52,6 +52,9 @@ def test_ole_gunnar():
     source = FootballWikiSource()
     source.set_content(fixture)
 
+    assert len(source.get_templates_of_type(template_type='Country flagicon2')) == 17
+    assert len(source.get_templates_of_type(template_type='Birth date and age')) == 1
+
     models = list(source.get_models())
     assert len(models) == 1
 
@@ -145,5 +148,5 @@ def test_manchester_united():
     assert team.get_relation_targets('coach') == ['Ole Gunnar Solskjær:Person']
 
     assert len(team.get_relation_targets('athlete')) == 29
-    assert team.get_relation_targets('athlete')[0] == ('David de Gea:Person', {'position': 'GK'}), 'This relation should have a property'
-    assert team.get_relation_targets('athlete')[2] == ('Eric Bailly:Person', {'position': 'DF'}), 'This relation should have a property'
+    assert team.get_relation_targets('athlete')[0] == ('David de Gea:Person', {'number': 1, 'position': 'GK'}), 'This relation should have a property'
+    assert team.get_relation_targets('athlete')[2] == ('Eric Bailly:Person', {'number': 3, 'position': 'DF'}), 'This relation should have a property'
