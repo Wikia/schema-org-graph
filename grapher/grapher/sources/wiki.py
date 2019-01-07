@@ -3,7 +3,7 @@ Takes data from Wikia's article
 """
 import json
 from . import BaseSource
-from ..models import BaseModel, PersonModel
+from ..models import PersonModel, SportsTeamModel
 from ..utils import extract_year, extract_link, extract_links, extract_number
 
 
@@ -139,11 +139,11 @@ class FootballWikiSource(WikiArticleSource):
                 model.add_property('height', template.get_number('height'))  # [m]
 
                 # add relations
-                for club in template.get_links('clubs') or []:
-                    model.add_relation('athlete', 'SportsTeam:{}'.format(club))
+                for club_name in template.get_links('clubs') or []:
+                    model.add_relation('athlete', SportsTeamModel(club_name).get_node_name())
 
-                for club in template.get_links('managerclubs') or []:
-                    model.add_relation('coach', 'SportsTeam:{}'.format(club))
+                for club_name in template.get_links('managerclubs') or []:
+                    model.add_relation('coach', SportsTeamModel(club_name).get_node_name())
 
                 yield model
 
@@ -151,7 +151,7 @@ class FootballWikiSource(WikiArticleSource):
                 # https://schema.org/SportsTeam
                 # print(template)
 
-                model = BaseModel(model_type='SportsTeam', name=template.get_page_title())
+                model = SportsTeamModel(name=template.get_page_title())
                 model.add_property('sport', 'Football')
 
                 model.add_property('foundingDate', template.get_year('founded'))
@@ -160,7 +160,8 @@ class FootballWikiSource(WikiArticleSource):
                 model.add_property('nationality', template.get_link('countryofbirth'))
                 model.add_property('url', template['website'])
 
-                model.add_relation('coach', 'Person:{}'.format(template.get_link('manager')))
+                model.add_relation('coach', PersonModel(
+                    name=template.get_link('manager')).get_node_name())
 
                 # now, let's try to extract all players in the current squad
                 players_templates = [
@@ -175,7 +176,7 @@ class FootballWikiSource(WikiArticleSource):
                     if player_name:
                         model.add_relation(
                             'athlete',
-                            'Person:{}'.format(player_name),
+                            PersonModel(player_name).get_node_name(),
                             {'position': player['pos']}
                         )
                     else:

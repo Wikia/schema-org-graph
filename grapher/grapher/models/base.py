@@ -29,9 +29,11 @@ class BaseModel(object):
 
     def get_node_name(self):
         """
+        Return node name for using in Cypher queries, e.g. "Foo:Type"
+
         :rtype: str
         """
-        return '{}:{}'.format(self.get_type(), self.get_name())
+        return '{}:{}'.format(self.get_name(), self.get_type())
 
     def add_property(self, key, value):
         """
