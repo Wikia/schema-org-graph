@@ -45,8 +45,11 @@ class BaseModel(object):
         """
         Return node name for using in Cypher queries, e.g. "Foo:Type"
 
-        :rtype: str
+        :rtype: str|None
         """
+        if self.get_name() is None:
+            return None
+
         return '{}:{}'.format(
             self.encode_name(self.get_name()),
             self.encode_name(self.get_type())

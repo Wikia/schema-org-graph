@@ -7,7 +7,7 @@ from os import path
 import redis
 import requests
 
-from data_flow_graph import format_graphviz_lines
+# from data_flow_graph import format_graphviz_lines
 from mwclient.client import Site
 from grapher.sources.wiki import WikiArticleSource, FootballWikiSource
 
@@ -26,9 +26,9 @@ CATEGORIES = [
     'Premier_League_players',
     'Premier_League_managers',
 
-    'Serie_A_clubs',
-    'Italian_players',
-    'Italian_Coaches',
+    # 'Serie_A_clubs',
+    # 'Italian_players',
+    # Italian_Coaches',
 ]
 
 
@@ -174,7 +174,9 @@ class RedisGraph(BaseGraph):
                          len(redis_graph.nodes), len(redis_graph.edges))
 
         redis_graph.commit()
-        self.logger.info('Committed')
+        redis_graph.redis_con.execute_command('SAvE')
+
+        self.logger.info('Committed and saved')
 
 
 def index():
@@ -192,13 +194,15 @@ def index():
     for category in CATEGORIES:
         pages += wiki.pages_in_category(category)
 
-    pages = sorted(pages)
+    # make the list unique (we may have the same page in players and manager category)
+    # and sort it
+    pages = sorted(list(set(pages)))
 
     # get and parse templates
     logger.info("Will create models from %d pages", len(pages))
 
     models = []
-    for page in pages[:25]:
+    for page in pages:
         models += wiki.get_models_from_page(page, source=FootballWikiSource())
 
     logger.info("%d models were created from pages", len(models))
@@ -211,6 +215,7 @@ def index():
 
     graph.store('football')
 
+    """
     # ok, now generate dot file
     lines = []
 
@@ -230,3 +235,4 @@ def index():
         dot_file.writelines(format_graphviz_lines(lines))
 
     logger.info('Done')
+    """
