@@ -16,17 +16,17 @@ from grapher.graph import RedisGraph
 OUTPUT_DIRECTORY = path.join(path.dirname(__file__), '../../output/')
 
 # http://football.sandbox-s6.wikia.com/api/v1/Templates/Metadata?title=Zlatan_Ibrahimovi%C4%87
-WIKI_DOMAIN = 'football.sandbox-s6.wikia.com'
+WIKI_DOMAIN = 'football.wikia.com'
 
-# for start index pages from these categories only
 CATEGORIES = [
+    'Players',
+
+    # for start index Premier League and Serie A only
     'Premier_League_clubs',
-    'Premier_League_players',
     'Premier_League_managers',
 
-    # 'Serie_A_clubs',
-    # 'Italian_players',
-    # Italian_Coaches',
+    'Serie_A_clubs',
+    'Italian_Coaches',
 ]
 
 
@@ -39,7 +39,7 @@ class Wiki(object):
         self.logger.info('Using %s wiki', wiki)
 
         self.pool = requests.Session()
-        self.pool.proxies = {'http': 'border-http-s3:80'}
+        # self.pool.proxies = {'http': 'border-http-s3:80'}
         self.site = Site(host=('http', wiki), path='/', pool=self.pool)
 
         self.cache_dir = path.join(path.dirname(__file__), '.cache')
