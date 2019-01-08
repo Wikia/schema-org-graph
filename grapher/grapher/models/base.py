@@ -11,6 +11,8 @@ class BaseModel(object):
     Base schema.org model for keeping metadata
     """
     def __init__(self, model_type, name):
+        assert name is not None, 'name of a model cannot be None'
+
         self.type = model_type
         self.name = name
         self.properties = OrderedDict(name=name)
