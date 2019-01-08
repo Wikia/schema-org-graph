@@ -108,9 +108,15 @@ class WikiArticleSource(BaseSource):
         """
         :rtype: list[Template]
         """
-        page_title = self.get_content_json()['title']
+        try:
+            data = self.get_content_json()
+        except json.decoder.JSONDecodeError:
+            self.logger.error('JSON decoding failed', exc_info=True)
+            return
 
-        for template in self.get_content_json().get('templates'):
+        page_title = data['title']
+
+        for template in data.get('templates'):
             yield Template(
                 page_title=page_title,
                 name=template['name'],
