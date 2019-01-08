@@ -36,6 +36,9 @@ class BaseModel(object):
         :type name str
         :rtype: str
         """
+        # remove UTF characters
+        name = name.encode('ascii', 'ignore').decode('ascii')
+
         # Must begin with an alphabetic letter
         # Can contain numbers, but not as the first character
         # Cannot contain symbols (an exception to this rule is using underscore)

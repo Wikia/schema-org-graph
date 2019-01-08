@@ -61,7 +61,7 @@ def test_ole_gunnar():
     ole = models[0]
     print(ole)
 
-    assert ole.get_node_name() == 'Ole_Gunnar_Solskj_r:Person'
+    assert ole.get_node_name() == 'Ole_Gunnar_Solskjr:Person'
     assert ole.get_type() == 'Person'
     assert ole.get_name() == 'Ole Gunnar Solskjær'
 
@@ -147,7 +147,7 @@ def test_manchester_united():
     assert team.get_property('memberOf') == 'Premier League'
     assert team.get_property('url') == 'http://www.manutd.com/'
 
-    assert team.get_relation_targets('coach') == ['Ole_Gunnar_Solskj_r:Person']
+    assert team.get_relation_targets('coach') == ['Ole_Gunnar_Solskjr:Person']
 
     assert len(team.get_relation_targets('athlete')) == 29
     assert team.get_relation_targets('athlete')[0] == ('David_de_Gea:Person', {'number': 1, 'position': 'GK'}), 'This relation should have a property'

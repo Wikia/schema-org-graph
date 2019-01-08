@@ -1,2 +1,2 @@
 [MESSAGES CONTROL]
-disable=fixme,pointless-string-statement,too-few-public-methods,useless-super-delegation,useless-object-inheritance
+disable=fixme,pointless-string-statement,too-few-public-methods,useless-super-delegation,useless-object-inheritance,wrong-import-order
