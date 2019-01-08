@@ -88,7 +88,11 @@ class RedisGraph(BaseGraph):
                     # we may want to refer to a node that was not indexed above
                     # e.g. English player in a Spanish club
                     if edge.dest_node.alias not in redis_graph.nodes:
-                        redis_graph.add_node(Node(alias=edge.dest_node.alias))
+                        node = Node(
+                            alias=edge.dest_node.alias,
+                            properties={'name': str(edge.dest_node.alias).split(':')[0]}
+                        )
+                        redis_graph.add_node(node)
                         self.logger.info('Adding missing node: %s', edge.dest_node.alias)
 
                     redis_graph.add_edge(edge)
@@ -106,7 +110,8 @@ class RedisGraph(BaseGraph):
         self.logger.info('Committing graph with %d nodes and %s edges',
                          len(redis_graph.nodes), len(redis_graph.edges))
 
+        redis_graph.delete()
         redis_graph.commit()
-        redis_graph.redis_con.execute_command('SAvE')
 
+        redis_graph.redis_con.execute_command('SAvE')
         self.logger.info('Committed and saved')
