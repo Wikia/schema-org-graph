@@ -188,16 +188,25 @@ class RedisGraph(BaseGraph):
             redis_con=redis.Redis(self.host, self.port)
         )
 
-        # add all nodes and edges
+        # add all nodes
         for model in self.models:
             redis_graph.add_node(self.model_to_node(model))
 
+        # and now add edges
+        for model in self.models:
             for edge in self.model_to_edges(model):
                 try:
+                    # add target node if needed
+                    # we may want to refer to a node that was not indexed above
+                    # e.g. English player in a Spanish club
+                    if edge.dest_node.alias not in redis_graph.nodes:
+                        redis_graph.add_node(Node(alias=edge.dest_node.alias))
+
                     redis_graph.add_edge(edge)
-                except KeyError as ex:
+                except KeyError:
+                    print(model)
                     # graph can be not complete, some nodes can be missing despite the relation
-                    self.logger.error('Node not found when adding an edge: %s', ex)
+                    self.logger.error('add_edge failed', exc_info=True)
 
         # and save it
         self.logger.info('Committing graph with %d nodes and %s edges',
