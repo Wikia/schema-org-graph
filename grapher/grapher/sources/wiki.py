@@ -141,7 +141,9 @@ class FootballWikiSource(WikiArticleSource):
                 # https://schema.org/Person
                 # print(template)
 
-                model = PersonModel(name=template['fullname'])
+                model = PersonModel(name=template['fullname']
+                                    or template['playername']
+                                    or template.get_page_title())
 
                 model.add_property('birthDate', template.get_year('dateofbirth'))
                 model.add_property('birthPlace', template['cityofbirth'])
@@ -171,7 +173,8 @@ class FootballWikiSource(WikiArticleSource):
                 model.add_property('url', template['website'])
 
                 model.add_relation('coach', PersonModel(
-                    name=template.get_link('manager')).get_node_name())
+                    name=template.get_link('manager') or template.get_link('coach')
+                ).get_node_name())
 
                 # now, let's try to extract all players in the current squad
                 for player in self.get_templates_of_type(template_type='Fs player'):
