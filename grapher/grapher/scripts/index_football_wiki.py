@@ -2,6 +2,7 @@
 This script takes data from football.wikia.com and loads into RedisGraph database
 """
 import logging
+from hashlib import md5
 from os import path
 
 import redis
@@ -44,6 +45,24 @@ class Wiki(object):
         self.pool.proxies = {'http': 'border-http-s3:80'}
         self.site = Site(host=('http', wiki), path='/', pool=self.pool)
 
+        self.cache_dir = path.join(path.dirname(__file__), '.cache')
+        self.logger.info("Using cache directory: %s", self.cache_dir)
+
+    def _get_cache_filename(self, entry_type, name):
+        """
+        Return a hashed filename of cache entry for a given URL
+        :type entry_type str
+        :type name str
+        :rtype: str
+        """
+        _hash = md5()
+        _hash.update(name.encode('utf-8'))
+
+        return path.join(
+            self.cache_dir,
+            '{}_{}.json'.format(entry_type, _hash.hexdigest())
+        )
+
     def pages_in_category(self, category_name):
         """
         :type category_name str
@@ -72,12 +91,23 @@ class Wiki(object):
         # https://nfs.sandbox-s6.fandom.com/wikia.php?controller=TemplatesApiController&method=getMetadata&title=Ferrari_355_F1
         # http://football.sandbox-s6.wikia.com/api/v1/Templates/Metadata?title=Zlatan_Ibrahimovi%C4%87
         # http://football.sandbox-s6.wikia.com/api/v1/Templates/Metadata?title=Zlatan_Ibrahimovi%C4%87
-        res_raw = self.pool.get(
-            'http://football.sandbox-s6.wikia.com/api/v1/Templates/Metadata',
-            params={'title': title}
-        )
+        cache_file = self._get_cache_filename('templates', title)
 
-        source.set_content(res_raw.text)
+        if not path.isfile(cache_file):
+            res_raw = self.pool.get(
+                'http://football.sandbox-s6.wikia.com/api/v1/Templates/Metadata',
+                params={'title': title}
+            ).text
+
+            # set the cache
+            with open(cache_file, 'wt') as file:
+                file.write(res_raw)
+        else:
+            # cache hit
+            with open(cache_file, 'rt') as file:
+                res_raw = file.read()
+
+        source.set_content(res_raw)
 
         return source.get_models()
 

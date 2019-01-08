@@ -109,3 +109,6 @@ redisgraph/data/
 # graphs
 *.png
 *.svg
+
+# cache
+grapher/grapher/scripts/.cache/*.json
