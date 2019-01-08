@@ -152,3 +152,23 @@ def test_manchester_united():
     assert len(team.get_relation_targets('athlete')) == 29
     assert team.get_relation_targets('athlete')[0] == ('David_de_Gea:Person', {'number': 1, 'position': 'GK'}), 'This relation should have a property'
     assert team.get_relation_targets('athlete')[2] == ('Eric_Bailly:Person', {'number': 3, 'position': 'DF'}), 'This relation should have a property'
+
+
+def test_burnley():
+    fixture = read_fixture('burnley.json')
+    source = FootballWikiSource()
+    source.set_content(fixture)
+
+    models = list(source.get_models())
+    assert len(models) == 1
+
+    team = models[0]
+    print(team)
+
+    assert team.get_node_name() == 'Burnley_F_C:SportsTeam'
+    assert team.get_type() == 'SportsTeam'
+    assert team.get_name() == 'Burnley F.C.', 'name should be taken from page title to allow proper linking'
+
+    assert team.get_relation_targets('coach') == ['Sean_Dyche:Person']
+
+    assert len(team.get_relation_targets('athlete')) == 37
