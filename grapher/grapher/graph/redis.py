@@ -23,7 +23,22 @@ class RedisGraph(BaseGraph):
         self.logger.info('Using redis: %s:%d', host, port)
 
     @staticmethod
-    def model_to_node(model):
+    def encode_properties(properties):
+        """
+        :type properties dict
+        :rtype: dict
+        """
+        ret = dict()
+
+        # redisgraph library does not encode quotes
+        # (John_Faxe_Jensen:Person{name:\"John \"Faxe\" Jensen\",birthDate:1965,height:1.78})
+        for key, value in properties.items():
+            ret[key] = value.replace('"', '\\"') if isinstance(value, str) else value
+
+        return ret
+
+    @classmethod
+    def model_to_node(cls, model):
         """
         :type model grapher.models.BaseModel
         :rtype: Node
@@ -33,11 +48,11 @@ class RedisGraph(BaseGraph):
 
         return Node(
             alias=model.get_node_name(),
-            properties=properties,
+            properties=cls.encode_properties(properties) if properties else None,
         )
 
-    @staticmethod
-    def model_to_edges(model):
+    @classmethod
+    def model_to_edges(cls, model):
         """
         :type model grapher.models.BaseModel
         :rtype: list[Edge]
@@ -48,7 +63,7 @@ class RedisGraph(BaseGraph):
                 src_node=Node(alias=model.get_node_name()),
                 relation=relation,
                 dest_node=Node(alias=target),
-                properties=properties
+                properties=cls.encode_properties(properties) if properties else None
             )
 
     def store(self, graph_name):
