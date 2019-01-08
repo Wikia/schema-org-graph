@@ -146,7 +146,7 @@ class FootballWikiSource(WikiArticleSource):
                                     or template.get_page_title())
 
                 model.add_property('birthDate', template.get_year('dateofbirth'))
-                model.add_property('birthPlace', template['cityofbirth'])
+                model.add_property('birthPlace', template['cityofbirth'] or None)
                 model.add_property('nationality', template.get_link('countryofbirth'))
                 model.add_property('height', template.get_number('height'))  # [m]
 

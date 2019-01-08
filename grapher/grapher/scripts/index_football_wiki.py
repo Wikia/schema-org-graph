@@ -201,12 +201,18 @@ class RedisGraph(BaseGraph):
                     # e.g. English player in a Spanish club
                     if edge.dest_node.alias not in redis_graph.nodes:
                         redis_graph.add_node(Node(alias=edge.dest_node.alias))
+                        self.logger.info('Adding missing node: %s', edge.dest_node.alias)
 
                     redis_graph.add_edge(edge)
                 except KeyError:
                     print(model)
                     # graph can be not complete, some nodes can be missing despite the relation
                     self.logger.error('add_edge failed', exc_info=True)
+
+        # assert valid nodes
+        # for _, node in redis_graph.nodes.items():
+        #    print(node.alias, node.properties)
+        #    print(str(node))
 
         # and save it
         self.logger.info('Committing graph with %d nodes and %s edges',
