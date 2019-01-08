@@ -44,6 +44,7 @@ class BaseModel(object):
         # Cannot contain symbols (an exception to this rule is using underscore)
         #
         # https://neo4j.com/docs/cypher-manual/current/syntax/naming/
+        name = re.sub(r'^\d', '', name)  # remove digits from the beginning of the string
         return re.sub(r'[^a-z0-9]+', '_', name, flags=re.IGNORECASE).strip('_')
 
     def get_node_name(self):
