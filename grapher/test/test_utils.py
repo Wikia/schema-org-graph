@@ -36,5 +36,6 @@ def test_extract_number():
     assert extract_number(' 12abcd34 ') == 12
 
     assert extract_number(' heightm=1.78 ') == 1.78
+    assert extract_number(' heightm=1,72 ') == 1.72
 
     assert extract_number(' abc ') is None

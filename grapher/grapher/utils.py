@@ -42,7 +42,9 @@ def extract_number(text):
     match = re.search(r'[0-9.,]+', text)
 
     if match:
-        value = match.group(0)
+        value = str(match.group(0))
+        if ',' in value:
+            value = value.replace(',', '.')
         if '.' in value:
             return float(value)
 
