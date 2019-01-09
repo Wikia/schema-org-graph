@@ -109,7 +109,7 @@ def test_allegri():
     assert coach.get_property('height') == 1.83
 
     assert coach.get_relation_targets('athlete')[-1] == ('Aglianese_Calcio_1923:SportsTeam', {'since': 2001, 'until': 2003})
-    assert coach.get_relation_targets('coach')[-1] == ('Juventus_F_C:SportsTeam', {'since': 2014, 'until': None})
+    assert coach.get_relation_targets('coach')[-1] == ('Juventus_F_C:SportsTeam', {'since': 2014})
 
 
 def test_zlatan():
@@ -133,7 +133,7 @@ def test_zlatan():
     assert zlatan.get_property('height') == 1.95
 
     assert zlatan.get_relation_targets('athlete')[0] == ('Malm_FF:SportsTeam', {'since': 1999, 'until': 2001})
-    assert zlatan.get_relation_targets('athlete')[-1] == ('LA_Galaxy:SportsTeam', {'since': 2018, 'until': None})
+    assert zlatan.get_relation_targets('athlete')[-1] == ('LA_Galaxy:SportsTeam', {'since': 2018})
     assert zlatan.get_relation_targets('coach') is None
 
 

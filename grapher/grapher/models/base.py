@@ -82,6 +82,10 @@ class BaseModel(object):
         :type target str
         :type properties dict
         """
+        # remove None values from properties
+        if properties:
+            properties = {k: v for k, v in properties.items() if v is not None}
+
         self.relations.append((relation, target, properties))
 
     def get_relation_targets(self, relation_type):
