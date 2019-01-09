@@ -4,6 +4,16 @@
 
 Map articles metadata and relationship to schema.org entities and stores them in RedisGraph database.
 
+## Data
+
+This repository contains structured data for 3133 football teams and 4760 football players (with focus on Premier League and Serie A). [Football Wiki](http://football.wikia.com) infoboxes (and other templates) were used as a source.
+
+We store basic information about each player and manager (birth date, nationality, height) and team (league membership, foundation year, stadium). Both types of nodes (person - player / manager, sports team) are connected with relations. A person can be a `coach` or an `athlete` for the club.
+
+```
+2019-01-09 12:50:59 RedisGraph                INFO     Committing graph with 7893 nodes and 18398 edges
+```
+
 ## Run it
 
 ```
@@ -21,13 +31,6 @@ redis-cli -p 56379
 * `grapher` is a Python 3.x project used to collect structured data from Football Wiki. Please set up virtual env and run `index_football_wiki` script there.
 * Alternatively, tou can take graph dump stored in [`grapher/output/football.graph`](https://github.com/Wikia/schema-org-graph/tree/master/grapher/output) file and load it into RedisGraph instance.
 
-## Data
-
-This repository contains structured data for 3133 football teams and 4760 football players (with focus on Premier League and Serie A). [Football Wiki](http://football.wikia.com) infoboxes (and other templates) were used as a source.
-
-```
-2019-01-09 12:50:59 RedisGraph                INFO     Committing graph with 7893 nodes and 18398 edges
-```
 
 ## Some stats
 
