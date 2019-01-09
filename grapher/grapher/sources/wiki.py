@@ -2,6 +2,7 @@
 Takes data from Wikia's article
 """
 import json
+import re
 from . import BaseSource
 from ..models import PersonModel, SportsTeamModel
 from ..utils import extract_year, extract_link, extract_links, extract_number
@@ -142,6 +143,30 @@ class FootballWikiSource(WikiArticleSource):
     """
     Takes metadata from football.wikia.com
     """
+    @staticmethod
+    def extract_clubs_and_years(template, clubs_param, years_param):
+        """
+        :type template Template
+        :type clubs_param str
+        :type years_param str
+        :rtype: list
+        """
+        # years: " 1990–1994<br>1994–1996<br>1996–2007<br>'''Total''' ",
+        # clubs: " FlagiconNOR [[Clausenengen FK|Clausenengen]]<br>FlagiconNOR ...",
+        years = template[years_param]
+        clubs = template.get_links(clubs_param)
+
+        assert years
+        assert clubs
+
+        # we will pop in the loop below
+        clubs.reverse()
+
+        for match in re.finditer(r'(\d{4})[^\d](\d{4})?', years):
+            (since, until) = re.split(r'[^\d]', match.group(0))
+
+            yield (clubs.pop(), (int(since), int(until) if until else None))
+
     def get_models(self):
         for template in self.get_templates():
             if template.get_name() == 'Infobox Biography':
