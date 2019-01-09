@@ -71,8 +71,19 @@ def test_ole_gunnar():
     assert ole.get_property('height') == 1.78
     assert ole.get_property('foo') is None
 
-    assert ole.get_relation_targets('athlete') == ['Clausenengen_FK:SportsTeam', 'Molde_FK:SportsTeam', 'Manchester_United_F_C:SportsTeam']
-    assert ole.get_relation_targets('coach') == ['Manchester_United_F_C_Reserves_and_Academy:SportsTeam', 'Molde_FK:SportsTeam', 'Cardiff_City_F_C:SportsTeam', 'Molde_FK:SportsTeam', 'Manchester_United_F_C:SportsTeam']
+    assert len(ole.get_relation_targets('athlete')) == 3
+    assert ole.get_relation_targets('athlete')[0] == ('Clausenengen_FK:SportsTeam', {'since': 1990, 'until': 1994})
+    assert ole.get_relation_targets('athlete')[1] == ('Molde_FK:SportsTeam', {'since': 1994, 'until': 1996})
+    assert ole.get_relation_targets('athlete')[2] == ('Manchester_United_F_C:SportsTeam', {'since': 1996, 'until': 2007})
+
+    assert len(ole.get_relation_targets('coach')) == 6
+
+    assert ole.get_relation_targets('coach')[0] == ('Manchester_United_F_C_Reserves_and_Academy:SportsTeam', {'since': 2008, 'until': 2011})
+    assert ole.get_relation_targets('coach')[1] == ('Molde_FK:SportsTeam', {'since': 2011, 'until': 2014})
+    assert ole.get_relation_targets('coach')[2] == ('Cardiff_City_F_C:SportsTeam', {'since': 2014, 'until': 2014}), 'A single year contract'
+    assert ole.get_relation_targets('coach')[3] == ('Clausenengen_FK:SportsTeam', {'since': 2014, 'until': 2016})
+    assert ole.get_relation_targets('coach')[4] == ('Molde_FK:SportsTeam', {'since': 2015, 'until': 2018})
+    assert ole.get_relation_targets('coach')[5] == ('Manchester_United_F_C:SportsTeam', {'since': 2018, 'until': 2019})
 
     assert ole.get_relation_targets('foo') is None
 
@@ -97,8 +108,8 @@ def test_allegri():
     assert coach.get_property('nationality') == 'Italy'
     assert coach.get_property('height') == 1.83
 
-    assert coach.get_relation_targets('athlete')[-1] == 'Aglianese_Calcio_1923:SportsTeam'
-    assert coach.get_relation_targets('coach')[-1] == 'Juventus_F_C:SportsTeam'
+    assert coach.get_relation_targets('athlete')[-1] == ('Aglianese_Calcio_1923:SportsTeam', {'since': 2001, 'until': 2003})
+    assert coach.get_relation_targets('coach')[-1] == ('Juventus_F_C:SportsTeam', {'since': 2014, 'until': None})
 
 
 def test_zlatan():
@@ -121,8 +132,8 @@ def test_zlatan():
     assert zlatan.get_property('nationality') == 'Sweden'
     assert zlatan.get_property('height') == 1.95
 
-    assert zlatan.get_relation_targets('athlete')[0] == 'Malm_FF:SportsTeam'
-    assert zlatan.get_relation_targets('athlete')[-1] == 'LA_Galaxy:SportsTeam'
+    assert zlatan.get_relation_targets('athlete')[0] == ('Malm_FF:SportsTeam', {'since': 1999, 'until': 2001})
+    assert zlatan.get_relation_targets('athlete')[-1] == ('LA_Galaxy:SportsTeam', {'since': 2018, 'until': None})
     assert zlatan.get_relation_targets('coach') is None
 
 

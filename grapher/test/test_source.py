@@ -7,7 +7,7 @@ def test_extract_clubs_and_years():
         page_title='Foo',
         name='Bar',
         parameters={
-            'years': " 1990–1994<br>1994–1996<br>1996–2007<br>'''Total''' ",
+            'years': " 1990–1996<br>1996<br>1996–2007<br>'''Total''' ",
             'clubs': " FlagiconNOR [[Clausenengen FK|Clausenengen]]<br>FlagiconNOR [[Molde FK|Molde]]<br>FlagiconENG [[Manchester United F.C.|Manchester United]] ",
         }
     )
@@ -16,8 +16,8 @@ def test_extract_clubs_and_years():
     print(relations)
 
     assert len(relations) == 3
-    assert relations[0] == ('Clausenengen FK', (1990, 1994))
-    assert relations[1] == ('Molde FK', (1994, 1996))
+    assert relations[0] == ('Clausenengen FK', (1990, 1996))
+    assert relations[1] == ('Molde FK', (1996, 1996)), 'A single year contract'
     assert relations[2] == ('Manchester United F.C.', (1996, 2007))
 
 

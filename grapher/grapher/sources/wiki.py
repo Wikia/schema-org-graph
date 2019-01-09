@@ -156,16 +156,26 @@ class FootballWikiSource(WikiArticleSource):
         years = template[years_param]
         clubs = template.get_links(clubs_param)
 
-        assert years
-        assert clubs
+        if not years or not clubs:
+            return
 
         # we will pop in the loop below
         clubs.reverse()
 
-        for match in re.finditer(r'(\d{4})[^\d](\d{4})?', years):
-            (since, until) = re.split(r'[^\d]', match.group(0))
+        for match in re.finditer(r'(\d{4})[^\d<]?(\d{4})?', years):
+            match_string = str(match.group(0))
+
+            if re.match(r'^\d+$', match_string):
+                # handle a single year cotract (e.g. 2014)
+                since = until = match_string
+            else:
+                (since, until) = re.split(r'[^\d]', match_string)
 
             yield (clubs.pop(), (int(since), int(until) if until else None))
+
+            # we have reached the end of clubs list, leave now
+            if not clubs:
+                return
 
     def get_models(self):
         for template in self.get_templates():
@@ -183,11 +193,27 @@ class FootballWikiSource(WikiArticleSource):
                 model.add_property('height', template.get_number('height'))  # [m]
 
                 # add relations
-                for club_name in template.get_links('clubs') or []:
-                    model.add_relation('athlete', SportsTeamModel(club_name).get_node_name())
+                for (club_name, (since, until)) in self.extract_clubs_and_years(
+                        template, 'clubs', 'years'):
+                    model.add_relation(
+                        'athlete',
+                        SportsTeamModel(club_name).get_node_name(),
+                        properties={
+                            'since': since,
+                            'until': until
+                        }
+                    )
 
-                for club_name in template.get_links('managerclubs') or []:
-                    model.add_relation('coach', SportsTeamModel(club_name).get_node_name())
+                for (club_name, (since, until)) in self.extract_clubs_and_years(
+                        template, 'managerclubs', 'manageryears'):
+                    model.add_relation(
+                        'coach',
+                        SportsTeamModel(club_name).get_node_name(),
+                        properties={
+                            'since': since,
+                            'until': until
+                        }
+                    )
 
                 yield model
 
