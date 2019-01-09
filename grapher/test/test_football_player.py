@@ -26,7 +26,7 @@ def test_template():
     assert template.get_page_title() == 'The page'
     assert template.get_name() == 'Infobox Biography'
     assert template['cityofbirth'] == 'Kristiansund', 'Parameter value should be trimmed'
-    assert template['clubnumber'] == '', 'Empty parameter should return an empty string'
+    assert template['clubnumber'] is None, 'Empty parameter should return None'
     assert template['foo'] is None, 'Not defined parameter should return None'
 
     # values extraction

@@ -65,7 +65,8 @@ class Template(object):
 
         # remove trailing whitespaces from string values
         if isinstance(value, str):
-            return value.strip()
+            ret = value.strip()
+            return ret if ret != '' else None
 
         return value
 
