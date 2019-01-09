@@ -2,13 +2,20 @@
 
 [![Build Status](https://travis-ci.com/Wikia/schema-org-graph.svg?branch=master)](https://travis-ci.com/Wikia/schema-org-graph)
 
-Map articles metadata and relationship to schema.org entities and stores them in RedisGraph database.
+Map articles metadata and relationship to [schema.org entities](https://schema.org/) and stores them in [RedisGraph database](https://oss.redislabs.com/redisgraph/).
 
 ## Data
 
-This repository contains structured data for 3133 football teams and 4760 football players (with focus on Premier League and Serie A). [Football Wiki](http://football.wikia.com) infoboxes (and other templates) were used as a source.
+This repository contains structured data for **3133 football teams** and **4760 football players** (with focus on Premier League and Serie A). [Football Wiki](http://football.wikia.com) infoboxes (and other templates) were used as a source.
 
-We store basic information about each player and manager (birth date, nationality, height) and team (league membership, foundation year, stadium). Both types of nodes (person - player / manager, sports team) are connected with relations. A person can be a `coach` or an `athlete` for the club.
+### Nodes
+
+We store basic information about each player and manager (birth date, nationality, height) and team (league membership, foundation year, stadium) as nodes. Both types of nodes - [`Person`](https://schema.org/Person) (a player or a manager) and [`SportsTeam`](https://schema.org/SportsTeam) - are connected with relations. A person can be a `coach` or an `athlete` for the club.
+
+### Relations
+
+* player career is described as `[:athlete]` relation (with `since` and `until` properties) with `SportsTeam` node.
+* team's current squad is described as `[:athlete]` relation with `Person` node. Player position on the field and number is stored in relation's properies.
 
 ```
 2019-01-09 12:50:59 RedisGraph                INFO     Committing graph with 7893 nodes and 18398 edges
