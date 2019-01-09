@@ -110,7 +110,12 @@ class RedisGraph(BaseGraph):
         self.logger.info('Committing graph with %d nodes and %s edges',
                          len(redis_graph.nodes), len(redis_graph.edges))
 
-        redis_graph.delete()
+        try:
+            redis_graph.delete()
+        except redis.exceptions.ResponseError as ex:
+            # Graph was not found in database.
+            self.logger.info(ex)
+
         redis_graph.commit()
 
         redis_graph.redis_con.execute_command('SAvE')
