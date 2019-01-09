@@ -7,7 +7,6 @@ from os import path
 
 import requests
 
-# from data_flow_graph import format_graphviz_lines
 from mwclient.client import Site
 from grapher.sources.wiki import WikiArticleSource, FootballWikiSource
 from grapher.graph import RedisGraph
@@ -143,26 +142,11 @@ def index():
     for model in models:
         graph.add(model)
 
-    graph.store('football')
+    # store the graph in a file
+    with open(OUTPUT_DIRECTORY + '/football.graph', 'wt') as graph_file:
+        graph_file.write(graph.dump(graph_name='football'))
 
-    """
-    # ok, now generate dot file
-    lines = []
-
-    for model in models:
-        # render each relation as an edge in dot file (graphviz format)
-        # https://github.com/macbre/data-flow-graph
-        for (relation, target, _) in model.get_all_relations():
-            lines.append({
-                'source': model.get_node_name(),
-                'metadata': relation,
-                'target': target
-            })
-
-    logger.info("Saving %d edges to dot file", len(lines))
-
-    with open(OUTPUT_DIRECTORY + '/football.dot', 'wt') as dot_file:
-        dot_file.writelines(format_graphviz_lines(lines))
+    # save it in a storage
+    graph.store(graph_name='football')
 
     logger.info('Done')
-    """

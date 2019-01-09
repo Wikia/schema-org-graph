@@ -128,7 +128,7 @@ class RedisGraph(BaseGraph):
             query += str(edge) + ','
 
         # Discard leading comma.
-        if query[-1] is ',':
+        if query[-1] == ',':
             query = query[:-1]
 
         # encode "
