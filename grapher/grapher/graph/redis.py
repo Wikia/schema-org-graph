@@ -66,9 +66,10 @@ class RedisGraph(BaseGraph):
                 properties=cls.encode_properties(properties) if properties else None
             )
 
-    def store(self, graph_name):
+    def _get_graph(self, graph_name):
         """
         :type graph_name str
+        :rtype: Graph
         """
         # https://github.com/RedisLabs/redisgraph-py#example-using-the-python-client
         redis_graph = Graph(
@@ -105,6 +106,43 @@ class RedisGraph(BaseGraph):
         # for _, node in redis_graph.nodes.items():
         #    print(node.alias, node.properties)
         #    print(str(node))
+        return redis_graph
+
+    def dump(self, graph_name):
+        """
+        Return a redisgraph command that would create a graph
+
+        :type graph_name str
+        :rtype: str
+        """
+        redis_graph = self._get_graph(graph_name)
+
+        # https://oss.redislabs.com/redisgraph/#with-redis-cli
+        # copied from redisgraph/client.py (commit function)
+        query = ''
+
+        for _, node in redis_graph.nodes.items():
+            query += str(node) + ','
+
+        for edge in redis_graph.edges:
+            query += str(edge) + ','
+
+        # Discard leading comma.
+        if query[-1] is ',':
+            query = query[:-1]
+
+        # encode "
+        query = query.replace('"', '\\"')
+
+        return 'GRAPH.QUERY {name} "CREATE {graph}"'.format(name=graph_name, graph=query)
+
+    def store(self, graph_name):
+        """
+        Store the graph in Redis
+
+        :type graph_name str
+        """
+        redis_graph = self._get_graph(graph_name)
 
         # and save it
         self.logger.info('Committing graph with %d nodes and %s edges',
