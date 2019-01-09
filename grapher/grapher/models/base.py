@@ -2,6 +2,7 @@
 Base model
 """
 import json
+import re
 from collections import OrderedDict
 
 
@@ -10,9 +11,11 @@ class BaseModel(object):
     Base schema.org model for keeping metadata
     """
     def __init__(self, model_type, name):
+        assert name is not None, 'name of a model cannot be None'
+
         self.type = model_type
         self.name = name
-        self.properties = OrderedDict()
+        self.properties = OrderedDict(name=name)
         self.relations = list()
 
     def get_type(self):
@@ -27,11 +30,36 @@ class BaseModel(object):
         """
         return self.name
 
-    def get_node_name(self):
+    @staticmethod
+    def encode_name(name):
         """
+        :type name str
         :rtype: str
         """
-        return '{}:{}'.format(self.get_type(), self.get_name())
+        # remove UTF characters
+        name = name.encode('ascii', 'ignore').decode('ascii')
+
+        # Must begin with an alphabetic letter
+        # Can contain numbers, but not as the first character
+        # Cannot contain symbols (an exception to this rule is using underscore)
+        #
+        # https://neo4j.com/docs/cypher-manual/current/syntax/naming/
+        name = re.sub(r'^\d+', '', name)  # remove digits from the beginning of the string
+        return re.sub(r'[^a-z0-9]+', '_', name, flags=re.IGNORECASE).strip('_')
+
+    def get_node_name(self):
+        """
+        Return node name for using in Cypher queries, e.g. "Foo:Type"
+
+        :rtype: str|None
+        """
+        if self.get_name() is None:
+            return None
+
+        return '{}:{}'.format(
+            self.encode_name(self.get_name()),
+            self.encode_name(self.get_type())
+        )
 
     def add_property(self, key, value):
         """
@@ -54,6 +82,10 @@ class BaseModel(object):
         :type target str
         :type properties dict
         """
+        # remove None values from properties
+        if properties:
+            properties = {k: v for k, v in properties.items() if v is not None}
+
         self.relations.append((relation, target, properties))
 
     def get_relation_targets(self, relation_type):

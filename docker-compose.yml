@@ -1,6 +1,6 @@
 version: '2'
 services:
-  sphinx:
+  db:
     image: redislabs/redisgraph:1.0.8
     ports:
     - "127.0.0.1:56379:6379" # bind to local interface only!
