@@ -21,6 +21,27 @@ We store basic information about each player and manager (birth date, nationalit
 2019-01-09 12:50:59 RedisGraph                INFO     Committing graph with 7893 nodes and 18398 edges
 ```
 
+## How data was collected?
+
+> See `FootballWikiSource` Python class for implementation details.
+
+`mwclient` Python module was used to get a list of articles from provided categories - players and teams. For each article we queried our [custom API that returnes a list of all templates](http://football.wikia.com/api/v1/Templates/Metadata?title=Zlatan%20Ibrahimović) (with parameters passed) that were used in a given article.
+
+We assumed the following:
+
+* `Infobox Biography` template describes a person (either a player or a manager, or even both)
+* `Infobox Club` template described a team
+* `Fs player` template is used to connect teams with players (i.e. set up a relation for the current team squad)
+
+As we parse the list of parameters passed to templates we assume that:
+
+* parameters with links form a relation (e.g. player played in this club, club has this person as a manager)
+* parameters with plain values are source of data for properties (club foundation year, birth date, player's height)
+
+We model collected data using [schema.org](https://schema.org/Person) types and properties. Each model is then represented as a node in graph database, while relation is an edge.
+
+This approach will later on allow us to expose structured data and links between entities in HTML of rendered wiki articles.
+
 ## Run it
 
 ```
