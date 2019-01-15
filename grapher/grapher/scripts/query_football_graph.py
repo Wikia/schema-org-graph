@@ -74,7 +74,14 @@ def index():
 
     # http://visjs.org/docs/network/edges.html
     egde_fields = {
-        'athletee': ('p.name', 't.name')  # athletee relation will connect p.name -> t.name nodes
+        # athletee relation will connect p.name -> t.name nodes
+        'athletee': (
+            'p.name', 't.name',
+            lambda x: '{}-{}'.format(
+                int(float(x['a.since'])),
+                int(float(x['a.until'])) if x['a.until'] != 'NULL' else 'now'
+            )
+        )
     }
 
     nodes = dict()
@@ -100,11 +107,14 @@ def index():
     edges = []
 
     for match in matches:
-        for edge_type, (from_field, to_field) in egde_fields.items():
+        for edge_type, (from_field, to_field, edge_lambda) in egde_fields.items():
             edge_from = '{}:{}'.format(match[from_field], nodes_fields[from_field])
             edge_to = '{}:{}'.format(match[to_field], nodes_fields[to_field])
 
-            logging.info('Adding an edge: %s -> %s', edge_from, edge_to)
+            if edge_lambda:
+                edge_type = edge_lambda(match)
+
+            logging.info('Adding an edge: %s -> %s (%s)', edge_from, edge_to, edge_type)
 
             edges.append({
                 'from': edge_from,
