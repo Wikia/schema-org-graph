@@ -90,10 +90,13 @@ class Wiki(object):
         cache_file = self._get_cache_filename('templates', title)
 
         if not path.isfile(cache_file):
-            res_raw = self.pool.get(
+            res = self.pool.get(
                 'http://football.sandbox-s6.wikia.com/api/v1/Templates/Metadata',
                 params={'title': title}
-            ).text
+            )
+            res.raise_for_status()
+
+            res_raw = res.text
 
             # set the cache
             with open(cache_file, 'wt') as file:

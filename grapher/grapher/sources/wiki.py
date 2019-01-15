@@ -112,9 +112,10 @@ class WikiArticleSource(BaseSource):
         """
         try:
             data = self.get_content_json()
-        except json.decoder.JSONDecodeError:
+        except json.decoder.JSONDecodeError as ex:
             self.logger.error('JSON decoding failed', exc_info=True)
-            return
+            self.logger.info(self.get_content())
+            raise ex
 
         page_title = data['title']
 
