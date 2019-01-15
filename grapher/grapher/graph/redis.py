@@ -66,16 +66,23 @@ class RedisGraph(BaseGraph):
                 properties=cls.encode_properties(properties) if properties else None
             )
 
-    def _get_graph(self, graph_name):
+    def get_redisgraph(self, graph_name):
+        """
+        :type graph_name str
+        :rtype: Graph
+        """
+        return Graph(
+            name=graph_name,
+            redis_con=redis.Redis(self.host, self.port)
+        )
+
+    def _build_graph(self, graph_name):
         """
         :type graph_name str
         :rtype: Graph
         """
         # https://github.com/RedisLabs/redisgraph-py#example-using-the-python-client
-        redis_graph = Graph(
-            name=graph_name,
-            redis_con=redis.Redis(self.host, self.port)
-        )
+        redis_graph = self.get_redisgraph(graph_name)
 
         # add all nodes
         for model in self.models:
@@ -115,7 +122,7 @@ class RedisGraph(BaseGraph):
         :type graph_name str
         :rtype: str
         """
-        redis_graph = self._get_graph(graph_name)
+        redis_graph = self._build_graph(graph_name)
 
         # https://oss.redislabs.com/redisgraph/#with-redis-cli
         # copied from redisgraph/client.py (commit function)
@@ -142,7 +149,7 @@ class RedisGraph(BaseGraph):
 
         :type graph_name str
         """
-        redis_graph = self._get_graph(graph_name)
+        redis_graph = self._build_graph(graph_name)
 
         # and save it
         self.logger.info('Committing graph with %d nodes and %s edges',
