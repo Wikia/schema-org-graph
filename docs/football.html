@@ -4,6 +4,7 @@
   <link href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans:300,600&amp;subset=latin-ext" rel="stylesheet">
 </head>
 <body>
+  <h1 id="title">Midfielders in Premier League</h1>
   <div class="alchemy" id="graph"></div>
 
   <style>
@@ -11,6 +12,18 @@
       font-family: "IBM Plex Sans";
       margin: 0;
       padding: 0;
+    }
+
+    h1 {
+      position: absolute;
+      left: 20px;
+      top: 20px;
+      color: #8669a3;
+      background: #8669a366;
+      border-bottom: solid 3px #8669a3;
+      z-index: 2;
+      margin: 0;
+      padding: 0.25em 0.5em;
     }
 
     /* Show Captions */
@@ -33,9 +46,8 @@
       font-weight: bold;
     }
 
-    svg {
-      border: solid 2px #ddd;
-      box-sizing: border-box;
+    .edge text {
+      display: block !important;
     }
   </style>
 
@@ -45,13 +57,12 @@
 
   <script type="text/javascript">
 
-	var graph = {"nodes": [{"id": 0, "caption": "Liverpool F.C.", "type": "SportsTeam"}, {"id": 1, "caption": "Manchester United F.C.", "type": "SportsTeam"}, {"id": 2, "caption": "Peter Andrew Beardsley", "type": "Person"}, {"id": 3, "caption": "Paul Emerson Carlyle Ince", "type": "Person"}, {"id": 4, "caption": "Michael James Owen", "type": "Person"}], "edges": [{"source": 2, "target": 0, "caption": "1987-1991"}, {"source": 2, "target": 1, "caption": "1982-1983"}, {"source": 3, "target": 0, "caption": "1997-1999"}, {"source": 3, "target": 1, "caption": "1989-1995"}, {"source": 4, "target": 0, "caption": "1996-2004"}, {"source": 4, "target": 1, "caption": "2009-2012"}]};
+	var graph = {"nodes": [{"id": 0, "caption": "Manchester City F.C.", "type": "SportsTeam"}, {"id": 1, "caption": "\u0130lkay G\u00fcndo\u011fan", "type": "Person"}, {"id": 2, "caption": "Watford F.C.", "type": "SportsTeam"}, {"id": 3, "caption": "\u00c9tienne Capoue", "type": "Person"}, {"id": 4, "caption": "Tottenham Hotspur F.C.", "type": "SportsTeam"}, {"id": 5, "caption": "Liverpool F.C.", "type": "SportsTeam"}, {"id": 6, "caption": "Xherdan Shaqiri", "type": "Person"}, {"id": 7, "caption": "West Ham United F.C.", "type": "SportsTeam"}, {"id": 8, "caption": "Manuel Lanzini", "type": "Person"}, {"id": 9, "caption": "Domingos Quina", "type": "Person"}, {"id": 10, "caption": "Harry Winks", "type": "Person"}, {"id": 11, "caption": "Ryan Kent", "type": "Person"}, {"id": 12, "caption": "A.F.C. Bournemouth", "type": "SportsTeam"}, {"id": 13, "caption": "Ryan Fraser", "type": "Person"}, {"id": 14, "caption": "Chelsea F.C.", "type": "SportsTeam"}, {"id": 15, "caption": "Ross Barkley", "type": "Person"}, {"id": 16, "caption": "Everton F.C.", "type": "SportsTeam"}, {"id": 17, "caption": "Jonjo Shelvey", "type": "Person"}, {"id": 18, "caption": "Manchester United F.C.", "type": "SportsTeam"}, {"id": 19, "caption": "Nemanja Mati\u0107", "type": "Person"}, {"id": 20, "caption": "Leicester City F.C.", "type": "SportsTeam"}, {"id": 21, "caption": "Nampalys Mendy", "type": "Person"}, {"id": 22, "caption": "Naby Ke\u00efta", "type": "Person"}, {"id": 23, "caption": "N'Golo Kant\u00e9", "type": "Person"}, {"id": 24, "caption": "Muhamed Be\u0161i\u0107", "type": "Person"}, {"id": 25, "caption": "Morgan Schneiderlin", "type": "Person"}, {"id": 26, "caption": "Southampton F.C.", "type": "SportsTeam"}, {"id": 27, "caption": "Arsenal F.C.", "type": "SportsTeam"}, {"id": 28, "caption": "Mesut \u00d6zil", "type": "Person"}, {"id": 29, "caption": "Mateo Kova\u010di\u0107", "type": "Person"}, {"id": 30, "caption": "Leroy San\u00e9", "type": "Person"}, {"id": 31, "caption": "Kevin De Bruyne", "type": "Person"}, {"id": 32, "caption": "Crystal Palace F.C.", "type": "SportsTeam"}, {"id": 33, "caption": "Luka Milivojevi\u0107", "type": "Person"}, {"id": 34, "caption": "Ki-Jana Hoever", "type": "Person"}, {"id": 35, "caption": "Lazar Markovi\u0107", "type": "Person"}, {"id": 36, "caption": "Bartosz Kapustka", "type": "Person"}, {"id": 37, "caption": "Hamza Choudhury", "type": "Person"}, {"id": 38, "caption": "Daniel Amartey", "type": "Person"}, {"id": 39, "caption": "Burnley F.C.", "type": "SportsTeam"}, {"id": 40, "caption": "J\u00f3hann Berg Gu\u00f0mundsson", "type": "Person"}, {"id": 41, "caption": "Emre Can", "type": "Person"}, {"id": 42, "caption": "Jeffrey Schlupp", "type": "Person"}, {"id": 43, "caption": "James McArthur", "type": "Person"}, {"id": 44, "caption": "Gedion Zelalem", "type": "Person"}, {"id": 45, "caption": "Cheikhou Kouyat\u00e9", "type": "Person"}, {"id": 46, "caption": "Ainsley Maitland-Niles", "type": "Person"}], "edges": [{"source": 1, "target": 0, "caption": "2016-now"}, {"source": 3, "target": 2, "caption": "2015-now"}, {"source": 3, "target": 4, "caption": "2013-2015"}, {"source": 6, "target": 5, "caption": "2018-now"}, {"source": 8, "target": 7, "caption": "2015-2016"}, {"source": 9, "target": 7, "caption": "2016-2018"}, {"source": 9, "target": 2, "caption": "2018-now"}, {"source": 10, "target": 4, "caption": "2014-now"}, {"source": 11, "target": 5, "caption": "2015-now"}, {"source": 13, "target": 12, "caption": "2013-now"}, {"source": 15, "target": 14, "caption": "2018-now"}, {"source": 15, "target": 16, "caption": "2010-2018"}, {"source": 17, "target": 5, "caption": "2010-2013"}, {"source": 19, "target": 18, "caption": "2017-now"}, {"source": 19, "target": 14, "caption": "2009-2011"}, {"source": 21, "target": 20, "caption": "2016-now"}, {"source": 22, "target": 5, "caption": "2018-now"}, {"source": 23, "target": 20, "caption": "2015-2016"}, {"source": 23, "target": 14, "caption": "2016-now"}, {"source": 24, "target": 16, "caption": "2014-now"}, {"source": 25, "target": 18, "caption": "2015-2017"}, {"source": 25, "target": 16, "caption": "2017-now"}, {"source": 25, "target": 26, "caption": "2008-2015"}, {"source": 28, "target": 27, "caption": "2013-now"}, {"source": 29, "target": 14, "caption": "2018-now"}, {"source": 30, "target": 0, "caption": "2016-now"}, {"source": 31, "target": 14, "caption": "2012-2014"}, {"source": 33, "target": 32, "caption": "2017-now"}, {"source": 34, "target": 5, "caption": "2018-now"}, {"source": 35, "target": 5, "caption": "2014-now"}, {"source": 36, "target": 20, "caption": "2016-now"}, {"source": 37, "target": 20, "caption": "2016-now"}, {"source": 38, "target": 20, "caption": "2016-now"}, {"source": 40, "target": 39, "caption": "2016-now"}, {"source": 41, "target": 5, "caption": "2014-2018"}, {"source": 42, "target": 20, "caption": "2010-2017"}, {"source": 42, "target": 32, "caption": "2017-now"}, {"source": 43, "target": 32, "caption": "2014-now"}, {"source": 44, "target": 27, "caption": "2014-now"}, {"source": 45, "target": 7, "caption": "2014-now"}, {"source": 46, "target": 27, "caption": "2014-now"}]};
 
     var config = {
       backgroundColor: '#fafafa',
       alpha: 1,
       divSelector: '#graph',
-      graphHeight: function() { return 750 },
       initialScale: 0.3,
       zoomControls: true,
       nodeOverlap: 15,

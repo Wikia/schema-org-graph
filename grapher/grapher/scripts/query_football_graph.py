@@ -78,6 +78,28 @@ def players_in_two_clubs(club_a, club_b):
     return matches
 
 
+def league_players_by_position(league, position):
+    """
+    :type league str
+    :type position str
+    :rtype: list[dict]
+    """
+    logging.info('Looking for players from %s playing as %s', league, position)
+
+    query = """
+    MATCH (t1:SportsTeam)-[a1:athlete]->(p:Person)-[a:athlete]->(t:SportsTeam)
+    WHERE t.memberOf = '{league}' AND a1.position = '{position}'
+    RETURN t.name,p.name,a.since,a.until
+    """
+
+    matches = query_redis('football', query, league=league, position=position)
+    matches = list(matches)
+
+    print("\n".join([str(match) for match in matches]))
+
+    return matches
+
+
 def matches_to_graph_json(matches, nodes_fields, edge_fields):
     """
     :type matches list[dict]
@@ -167,11 +189,10 @@ def index():
         },
         edge_fields=[
             # athletee relation will connect p.name -> t.name nodes
-            ['athletee', ('p.name', 't.name', years_played)]
+            ['athletee', ('p.name', 't.name', years_played()]
         ]
     )
 
-    """
     graph = matches_to_graph_json(
         players_in_two_clubs('Liverpool F.C.', 'Manchester United F.C.'),
         nodes_fields={
@@ -183,6 +204,18 @@ def index():
             # athletee relation will connect player and team nodes
             ['athletee', ('p.name', 't1.name', years_played('a1'))],
             ['athletee', ('p.name', 't2.name', years_played('a2'))],
+        ]
+    )
+    """
+    graph = matches_to_graph_json(
+        league_players_by_position('Premier League', 'MF'),
+        nodes_fields={
+            't.name': 'SportsTeam',
+            'p.name': 'Person',
+        },
+        edge_fields=[
+            # athletee relation will connect player and team nodes
+            ['athletee', ('p.name', 't.name', years_played())],
         ]
     )
 
