@@ -53,11 +53,36 @@ def nationalities_in_league(nationality, league):
     return matches
 
 
+def players_in_two_clubs(club_a, club_b):
+    """
+    :type club_a str
+    :type club_b str
+    :rtype: list[dict]
+    """
+    logging.info('Looking for players who played in both %s in %s', club_a, club_b)
+
+    query = """
+    MATCH (t1:SportsTeam)<-[a1:athlete]-(p:Person)-[a2:athlete]->(t2:SportsTeam)
+    WHERE t1.name = '{club_a}' and t2.name = '{club_b}'
+    RETURN p.name,
+        t1.name,t2.name,
+        a1.since,a1.until,
+        a2.since,a2.until
+    """
+
+    matches = query_redis('football', query, club_a=club_a, club_b=club_b)
+    matches = list(matches)
+
+    print("\n".join([str(match) for match in matches]))
+
+    return matches
+
+
 def matches_to_graph_json(matches, nodes_fields, edge_fields):
     """
     :type matches list[dict]
     :type nodes_fields dict
-    :type edge_fields dict
+    :type edge_fields list
     :rtype: dict
     """
     # pylint: disable=too-many-locals
@@ -95,7 +120,7 @@ def matches_to_graph_json(matches, nodes_fields, edge_fields):
     edges = []
 
     for match in matches:
-        for edge_type, (from_field, to_field, edge_lambda) in edge_fields.items():
+        for edge_type, (from_field, to_field, edge_lambda) in edge_fields:
             edge_from = '{}:{}'.format(match[from_field], nodes_fields[from_field])
             edge_to = '{}:{}'.format(match[to_field], nodes_fields[to_field])
 
@@ -122,6 +147,17 @@ def index():
     """
     Script's entry point
     """
+    def years_played(field='a'):
+        """
+        :type field str
+        :rtype: lambda
+        """
+        return lambda x: '{}-{}'.format(
+            int(float(x[field + '.since'])),
+            int(float(x[field + '.until'])) if x[field + '.until'] != 'NULL' else 'now'
+        )
+
+    """
     graph = matches_to_graph_json(
         nationalities_in_league('Iceland', 'Premier League'),
         # nationalities_in_league('Germany', 'Premier League')
@@ -129,16 +165,25 @@ def index():
             't.name': 'SportsTeam',
             'p.name': 'Person',
         },
-        edge_fields={
+        edge_fields=[
             # athletee relation will connect p.name -> t.name nodes
-            'athletee': (
-                'p.name', 't.name',
-                lambda x: '{}-{}'.format(
-                    int(float(x['a.since'])),
-                    int(float(x['a.until'])) if x['a.until'] != 'NULL' else 'now'
-                )
-            )
-        }
+            ['athletee', ('p.name', 't.name', years_played)]
+        ]
+    )
+
+    """
+    graph = matches_to_graph_json(
+        players_in_two_clubs('Liverpool F.C.', 'Manchester United F.C.'),
+        nodes_fields={
+            't1.name': 'SportsTeam',
+            't2.name': 'SportsTeam',
+            'p.name': 'Person',
+        },
+        edge_fields=[
+            # athletee relation will connect player and team nodes
+            ['athletee', ('p.name', 't1.name', years_played('a1'))],
+            ['athletee', ('p.name', 't2.name', years_played('a2'))],
+        ]
     )
 
     print('\tvar graph = {};'.format(json.dumps(graph)))
