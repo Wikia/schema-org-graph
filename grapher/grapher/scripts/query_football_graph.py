@@ -53,39 +53,22 @@ def nationalities_in_league(nationality, league):
     return matches
 
 
-def index():
+def matches_to_graph_json(matches, nodes_fields, edge_fields):
     """
-    Script's entry point
+    :type matches list[dict]
+    :type nodes_fields dict
+    :type edge_fields dict
+    :rtype: dict
     """
     # pylint: disable=too-many-locals
-    matches = nationalities_in_league('Iceland', 'Premier League')
-    # matches = nationalities_in_league('Germany', 'Premier League')
+    logger = logging.getLogger('matches_to_graph_json')
 
-    #
-    # generate GraphJSON for Alchemy.js visualization JS library
-    #
-    logging.info('Building GraphJSON...')
+    logger.info('Building GraphJSON for %d matches...', len(matches))
 
     # maps node ID to it's name
     nodes_name_to_id = dict()
 
     # mapping of matches field to node group, these fields will be a graph node when visualized
-    nodes_fields = {
-        't.name': 'SportsTeam',
-        'p.name': 'Person',
-    }
-
-    egde_fields = {
-        # athletee relation will connect p.name -> t.name nodes
-        'athletee': (
-            'p.name', 't.name',
-            lambda x: '{}-{}'.format(
-                int(float(x['a.since'])),
-                int(float(x['a.until'])) if x['a.until'] != 'NULL' else 'now'
-            )
-        )
-    }
-
     nodes = dict()
 
     for match in matches:
@@ -96,7 +79,7 @@ def index():
                 node_id = len(nodes_name_to_id.keys())
                 nodes_name_to_id[node_name] = node_id
 
-                logging.info('Adding node #%d: %s', node_id, node_name)
+                logger.info('Adding node #%d: %s', node_id, node_name)
 
                 nodes[node_name] = {
                     'id': node_id,
@@ -106,20 +89,20 @@ def index():
 
     nodes = list(nodes.values())
 
-    logging.info('Nodes added: %d', len(nodes))
+    logger.info('Nodes added: %d', len(nodes))
 
     # now build edges
     edges = []
 
     for match in matches:
-        for edge_type, (from_field, to_field, edge_lambda) in egde_fields.items():
+        for edge_type, (from_field, to_field, edge_lambda) in edge_fields.items():
             edge_from = '{}:{}'.format(match[from_field], nodes_fields[from_field])
             edge_to = '{}:{}'.format(match[to_field], nodes_fields[to_field])
 
             if edge_lambda:
                 edge_type = edge_lambda(match)
 
-            logging.info('Adding an edge: %s -> %s (%s)', edge_from, edge_to, edge_type)
+            logger.info('Adding an edge: %s -> %s (%s)', edge_from, edge_to, edge_type)
 
             edges.append({
                 'source': nodes_name_to_id[edge_from],
@@ -127,10 +110,35 @@ def index():
                 'caption': edge_type,
             })
 
-    logging.info('Edges added: %d', len(edges))
+    logger.info('Edges added: %d', len(edges))
 
-    logging.info('Cut here :) ====== ')
-    print('\tvar graph = {};'.format(json.dumps({
+    return {
         'nodes': nodes,
         'edges': edges,
-    })))
+    }
+
+
+def index():
+    """
+    Script's entry point
+    """
+    graph = matches_to_graph_json(
+        nationalities_in_league('Iceland', 'Premier League'),
+        # nationalities_in_league('Germany', 'Premier League')
+        nodes_fields={
+            't.name': 'SportsTeam',
+            'p.name': 'Person',
+        },
+        edge_fields={
+            # athletee relation will connect p.name -> t.name nodes
+            'athletee': (
+                'p.name', 't.name',
+                lambda x: '{}-{}'.format(
+                    int(float(x['a.since'])),
+                    int(float(x['a.until'])) if x['a.until'] != 'NULL' else 'now'
+                )
+            )
+        }
+    )
+
+    print('\tvar graph = {};'.format(json.dumps(graph)))
