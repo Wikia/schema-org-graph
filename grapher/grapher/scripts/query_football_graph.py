@@ -57,8 +57,9 @@ def index():
     """
     Script's entry point
     """
-    # nationalities_in_league('Iceland', 'Premier League')
-    matches = nationalities_in_league('Germany', 'Premier League')
+    # pylint: disable=too-many-locals
+    matches = nationalities_in_league('Iceland', 'Premier League')
+    # matches = nationalities_in_league('Germany', 'Premier League')
 
     #
     # generate GraphJSON for Alchemy.js visualization JS library
