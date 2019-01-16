@@ -1,38 +1,122 @@
-<!-- see https://appendto.com/2017/05/creating-network-diagrams-vis-js/ -->
+<html>
+<head>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/alchemyjs/0.4.2/alchemy-white.css"/>
+  <link href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans:300,600&amp;subset=latin-ext" rel="stylesheet">
+</head>
+<body>
+  <h1 id="title">Midfielders in Premier League</h1>
+  <div class="alchemy" id="graph"></div>
 
-<!-- https://github.com/almende/vis -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.css"/>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.js"></script>
+  <style>
+    body {
+      font-family: "IBM Plex Sans";
+      margin: 0;
+      padding: 0;
+    }
 
-<div class="network">Network Graph</div>
-<div class="report">Node</div>
+    h1 {
+      position: absolute;
+      left: 20px;
+      top: 20px;
+      color: #8669a3;
+      background: #8669a366;
+      border-bottom: solid 3px #8669a3;
+      z-index: 2;
+      margin: 0;
+      padding: 0.25em 0.5em;
+    }
 
-<script>
-    var data = {"nodes": [{"id": "Arsenal F.C.:SportsTeam", "label": "Arsenal F.C.", "group": "SportsTeam"}, {"id": "Shkodran Mustafi:Person", "label": "Shkodran Mustafi", "group": "Person"}, {"id": "Serge David Gnabry:Person", "label": "Serge David Gnabry", "group": "Person"}, {"id": "Sead Kola\u0161inac:Person", "label": "Sead Kola\u0161inac", "group": "Person"}, {"id": "Per Mertesacker:Person", "label": "Per Mertesacker", "group": "Person"}, {"id": "Mesut \u00d6zil:Person", "label": "Mesut \u00d6zil", "group": "Person"}, {"id": "Jens Gerhard Lehmann:Person", "label": "Jens Gerhard Lehmann", "group": "Person"}, {"id": "Bernd Leno:Person", "label": "Bernd Leno", "group": "Person"}, {"id": "Alberto M\u00e9ndez Rodr\u00edguez:Person", "label": "Alberto M\u00e9ndez Rodr\u00edguez", "group": "Person"}, {"id": "Manchester City F.C.:SportsTeam", "label": "Manchester City F.C.", "group": "SportsTeam"}, {"id": "\u0130lkay G\u00fcndo\u011fan:Person", "label": "\u0130lkay G\u00fcndo\u011fan", "group": "Person"}, {"id": "Leroy San\u00e9:Person", "label": "Leroy San\u00e9", "group": "Person"}, {"id": "J\u00e9r\u00f4me Agyenim Boateng:Person", "label": "J\u00e9r\u00f4me Agyenim Boateng", "group": "Person"}, {"id": "Tottenham Hotspur F.C.:SportsTeam", "label": "Tottenham Hotspur F.C.", "group": "SportsTeam"}, {"id": "Kevin-Prince Boateng:Person", "label": "Kevin-Prince Boateng", "group": "Person"}, {"id": "Leicester City F.C.:SportsTeam", "label": "Leicester City F.C.", "group": "SportsTeam"}, {"id": "Robert Huth:Person", "label": "Robert Huth", "group": "Person"}, {"id": "Jeffrey Schlupp:Person", "label": "Jeffrey Schlupp", "group": "Person"}, {"id": "Manchester United F.C.:SportsTeam", "label": "Manchester United F.C.", "group": "SportsTeam"}, {"id": "Bastian Schweinsteiger:Person", "label": "Bastian Schweinsteiger", "group": "Person"}, {"id": "Chelsea F.C.:SportsTeam", "label": "Chelsea F.C.", "group": "SportsTeam"}, {"id": "Michael Ballack:Person", "label": "Michael Ballack", "group": "Person"}, {"id": "Antonio R\u00fcdiger:Person", "label": "Antonio R\u00fcdiger", "group": "Person"}, {"id": "Andr\u00e9 Horst Sch\u00fcrrle:Person", "label": "Andr\u00e9 Horst Sch\u00fcrrle", "group": "Person"}, {"id": "Liverpool F.C.:SportsTeam", "label": "Liverpool F.C.", "group": "SportsTeam"}, {"id": "Samed Ye\u015fil:Person", "label": "Samed Ye\u015fil", "group": "Person"}, {"id": "Nuri \u015eahin:Person", "label": "Nuri \u015eahin", "group": "Person"}, {"id": "Loris Karius:Person", "label": "Loris Karius", "group": "Person"}, {"id": "Emre Can:Person", "label": "Emre Can", "group": "Person"}, {"id": "Crystal Palace F.C.:SportsTeam", "label": "Crystal Palace F.C.", "group": "SportsTeam"}, {"id": "Everton F.C.:SportsTeam", "label": "Everton F.C.", "group": "SportsTeam"}, {"id": "Muhamed Be\u0161i\u0107:Person", "label": "Muhamed Be\u0161i\u0107", "group": "Person"}, {"id": "Southampton F.C.:SportsTeam", "label": "Southampton F.C.", "group": "SportsTeam"}, {"id": "Maik Stefan Taylor:Person", "label": "Maik Stefan Taylor", "group": "Person"}, {"id": "C\u00e9dric Ricardo Alves Soares:Person", "label": "C\u00e9dric Ricardo Alves Soares", "group": "Person"}, {"id": "Burnley F.C.:SportsTeam", "label": "Burnley F.C.", "group": "SportsTeam"}, {"id": "Rouwen Hennings:Person", "label": "Rouwen Hennings", "group": "Person"}], "edges": [{"from": "Shkodran Mustafi:Person", "to": "Arsenal F.C.:SportsTeam", "label": "2016-now", "arrows": "to"}, {"from": "Serge David Gnabry:Person", "to": "Arsenal F.C.:SportsTeam", "label": "2012-2016", "arrows": "to"}, {"from": "Sead Kola\u0161inac:Person", "to": "Arsenal F.C.:SportsTeam", "label": "2017-now", "arrows": "to"}, {"from": "Per Mertesacker:Person", "to": "Arsenal F.C.:SportsTeam", "label": "2011-2018", "arrows": "to"}, {"from": "Mesut \u00d6zil:Person", "to": "Arsenal F.C.:SportsTeam", "label": "2013-now", "arrows": "to"}, {"from": "Jens Gerhard Lehmann:Person", "to": "Arsenal F.C.:SportsTeam", "label": "2003-2008", "arrows": "to"}, {"from": "Bernd Leno:Person", "to": "Arsenal F.C.:SportsTeam", "label": "2018-now", "arrows": "to"}, {"from": "Alberto M\u00e9ndez Rodr\u00edguez:Person", "to": "Arsenal F.C.:SportsTeam", "label": "1997-2002", "arrows": "to"}, {"from": "\u0130lkay G\u00fcndo\u011fan:Person", "to": "Manchester City F.C.:SportsTeam", "label": "2016-now", "arrows": "to"}, {"from": "Leroy San\u00e9:Person", "to": "Manchester City F.C.:SportsTeam", "label": "2016-now", "arrows": "to"}, {"from": "J\u00e9r\u00f4me Agyenim Boateng:Person", "to": "Manchester City F.C.:SportsTeam", "label": "2010-2011", "arrows": "to"}, {"from": "Kevin-Prince Boateng:Person", "to": "Tottenham Hotspur F.C.:SportsTeam", "label": "2007-2009", "arrows": "to"}, {"from": "Robert Huth:Person", "to": "Leicester City F.C.:SportsTeam", "label": "2015-2015", "arrows": "to"}, {"from": "Jeffrey Schlupp:Person", "to": "Leicester City F.C.:SportsTeam", "label": "2010-2017", "arrows": "to"}, {"from": "Bastian Schweinsteiger:Person", "to": "Manchester United F.C.:SportsTeam", "label": "2015-2017", "arrows": "to"}, {"from": "Robert Huth:Person", "to": "Chelsea F.C.:SportsTeam", "label": "2002-2006", "arrows": "to"}, {"from": "Michael Ballack:Person", "to": "Chelsea F.C.:SportsTeam", "label": "2006-2010", "arrows": "to"}, {"from": "Antonio R\u00fcdiger:Person", "to": "Chelsea F.C.:SportsTeam", "label": "2017-now", "arrows": "to"}, {"from": "Andr\u00e9 Horst Sch\u00fcrrle:Person", "to": "Chelsea F.C.:SportsTeam", "label": "2013-2015", "arrows": "to"}, {"from": "Samed Ye\u015fil:Person", "to": "Liverpool F.C.:SportsTeam", "label": "2012-now", "arrows": "to"}, {"from": "Nuri \u015eahin:Person", "to": "Liverpool F.C.:SportsTeam", "label": "2012-2013", "arrows": "to"}, {"from": "Loris Karius:Person", "to": "Liverpool F.C.:SportsTeam", "label": "2016-now", "arrows": "to"}, {"from": "Emre Can:Person", "to": "Liverpool F.C.:SportsTeam", "label": "2014-2018", "arrows": "to"}, {"from": "Jeffrey Schlupp:Person", "to": "Crystal Palace F.C.:SportsTeam", "label": "2017-now", "arrows": "to"}, {"from": "Shkodran Mustafi:Person", "to": "Everton F.C.:SportsTeam", "label": "2009-2011", "arrows": "to"}, {"from": "Muhamed Be\u0161i\u0107:Person", "to": "Everton F.C.:SportsTeam", "label": "2014-now", "arrows": "to"}, {"from": "Maik Stefan Taylor:Person", "to": "Southampton F.C.:SportsTeam", "label": "1992-1995", "arrows": "to"}, {"from": "C\u00e9dric Ricardo Alves Soares:Person", "to": "Southampton F.C.:SportsTeam", "label": "2015-now", "arrows": "to"}, {"from": "Rouwen Hennings:Person", "to": "Burnley F.C.:SportsTeam", "label": "2015-now", "arrows": "to"}]}
+    /* Show Captions */
+    .node text {
+      font-size: 15px;
+      fill: #666;
+      text-shadow: none;
+    }
+    .SportsTeam text {
+      fill: #8669a3;
+      font-size: 20px;
+      font-weight: bold;
+      letter-spacing: -1px;
+    }
 
-    console.log('Graph data', data);
-</script>
+    .edge.active text {
+      font-size: 10px;
+      fill: #999;
+      text-shadow: none !important;
+      font-weight: bold;
+    }
 
-<script>
-    // create a network
-    var container = document.querySelector('.network');
+    .edge text {
+      display: block !important;
+    }
+  </style>
 
-    // http://visjs.org/docs/network/#options
-    var options = {
-        nodes: {
-            mass: 1.3,
-            shape: 'box',
-            size: 25,
-            font: {
-                size: 18,
-                color: '#000'
+  <!-- https://cdnjs.cloudflare.com/ajax/libs/alchemyjs/0.4.2/alchemy.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/alchemyjs/0.4.2/scripts/vendor.js"></script>
+  <script src="static/alchemy.js"></script>
+
+  <script type="text/javascript">
+
+	var graph = {"nodes": [{"id": 0, "caption": "Manchester City F.C.", "type": "SportsTeam"}, {"id": 1, "caption": "\u0130lkay G\u00fcndo\u011fan", "type": "Person"}, {"id": 2, "caption": "Watford F.C.", "type": "SportsTeam"}, {"id": 3, "caption": "\u00c9tienne Capoue", "type": "Person"}, {"id": 4, "caption": "Tottenham Hotspur F.C.", "type": "SportsTeam"}, {"id": 5, "caption": "Liverpool F.C.", "type": "SportsTeam"}, {"id": 6, "caption": "Xherdan Shaqiri", "type": "Person"}, {"id": 7, "caption": "West Ham United F.C.", "type": "SportsTeam"}, {"id": 8, "caption": "Manuel Lanzini", "type": "Person"}, {"id": 9, "caption": "Domingos Quina", "type": "Person"}, {"id": 10, "caption": "Harry Winks", "type": "Person"}, {"id": 11, "caption": "Ryan Kent", "type": "Person"}, {"id": 12, "caption": "A.F.C. Bournemouth", "type": "SportsTeam"}, {"id": 13, "caption": "Ryan Fraser", "type": "Person"}, {"id": 14, "caption": "Chelsea F.C.", "type": "SportsTeam"}, {"id": 15, "caption": "Ross Barkley", "type": "Person"}, {"id": 16, "caption": "Everton F.C.", "type": "SportsTeam"}, {"id": 17, "caption": "Jonjo Shelvey", "type": "Person"}, {"id": 18, "caption": "Manchester United F.C.", "type": "SportsTeam"}, {"id": 19, "caption": "Nemanja Mati\u0107", "type": "Person"}, {"id": 20, "caption": "Leicester City F.C.", "type": "SportsTeam"}, {"id": 21, "caption": "Nampalys Mendy", "type": "Person"}, {"id": 22, "caption": "Naby Ke\u00efta", "type": "Person"}, {"id": 23, "caption": "N'Golo Kant\u00e9", "type": "Person"}, {"id": 24, "caption": "Muhamed Be\u0161i\u0107", "type": "Person"}, {"id": 25, "caption": "Morgan Schneiderlin", "type": "Person"}, {"id": 26, "caption": "Southampton F.C.", "type": "SportsTeam"}, {"id": 27, "caption": "Arsenal F.C.", "type": "SportsTeam"}, {"id": 28, "caption": "Mesut \u00d6zil", "type": "Person"}, {"id": 29, "caption": "Mateo Kova\u010di\u0107", "type": "Person"}, {"id": 30, "caption": "Leroy San\u00e9", "type": "Person"}, {"id": 31, "caption": "Kevin De Bruyne", "type": "Person"}, {"id": 32, "caption": "Crystal Palace F.C.", "type": "SportsTeam"}, {"id": 33, "caption": "Luka Milivojevi\u0107", "type": "Person"}, {"id": 34, "caption": "Ki-Jana Hoever", "type": "Person"}, {"id": 35, "caption": "Lazar Markovi\u0107", "type": "Person"}, {"id": 36, "caption": "Bartosz Kapustka", "type": "Person"}, {"id": 37, "caption": "Hamza Choudhury", "type": "Person"}, {"id": 38, "caption": "Daniel Amartey", "type": "Person"}, {"id": 39, "caption": "Burnley F.C.", "type": "SportsTeam"}, {"id": 40, "caption": "J\u00f3hann Berg Gu\u00f0mundsson", "type": "Person"}, {"id": 41, "caption": "Emre Can", "type": "Person"}, {"id": 42, "caption": "Jeffrey Schlupp", "type": "Person"}, {"id": 43, "caption": "James McArthur", "type": "Person"}, {"id": 44, "caption": "Gedion Zelalem", "type": "Person"}, {"id": 45, "caption": "Cheikhou Kouyat\u00e9", "type": "Person"}, {"id": 46, "caption": "Ainsley Maitland-Niles", "type": "Person"}], "edges": [{"source": 1, "target": 0, "caption": "2016-now"}, {"source": 3, "target": 2, "caption": "2015-now"}, {"source": 3, "target": 4, "caption": "2013-2015"}, {"source": 6, "target": 5, "caption": "2018-now"}, {"source": 8, "target": 7, "caption": "2015-2016"}, {"source": 9, "target": 7, "caption": "2016-2018"}, {"source": 9, "target": 2, "caption": "2018-now"}, {"source": 10, "target": 4, "caption": "2014-now"}, {"source": 11, "target": 5, "caption": "2015-now"}, {"source": 13, "target": 12, "caption": "2013-now"}, {"source": 15, "target": 14, "caption": "2018-now"}, {"source": 15, "target": 16, "caption": "2010-2018"}, {"source": 17, "target": 5, "caption": "2010-2013"}, {"source": 19, "target": 18, "caption": "2017-now"}, {"source": 19, "target": 14, "caption": "2009-2011"}, {"source": 21, "target": 20, "caption": "2016-now"}, {"source": 22, "target": 5, "caption": "2018-now"}, {"source": 23, "target": 20, "caption": "2015-2016"}, {"source": 23, "target": 14, "caption": "2016-now"}, {"source": 24, "target": 16, "caption": "2014-now"}, {"source": 25, "target": 18, "caption": "2015-2017"}, {"source": 25, "target": 16, "caption": "2017-now"}, {"source": 25, "target": 26, "caption": "2008-2015"}, {"source": 28, "target": 27, "caption": "2013-now"}, {"source": 29, "target": 14, "caption": "2018-now"}, {"source": 30, "target": 0, "caption": "2016-now"}, {"source": 31, "target": 14, "caption": "2012-2014"}, {"source": 33, "target": 32, "caption": "2017-now"}, {"source": 34, "target": 5, "caption": "2018-now"}, {"source": 35, "target": 5, "caption": "2014-now"}, {"source": 36, "target": 20, "caption": "2016-now"}, {"source": 37, "target": 20, "caption": "2016-now"}, {"source": 38, "target": 20, "caption": "2016-now"}, {"source": 40, "target": 39, "caption": "2016-now"}, {"source": 41, "target": 5, "caption": "2014-2018"}, {"source": 42, "target": 20, "caption": "2010-2017"}, {"source": 42, "target": 32, "caption": "2017-now"}, {"source": 43, "target": 32, "caption": "2014-now"}, {"source": 44, "target": 27, "caption": "2014-now"}, {"source": 45, "target": 7, "caption": "2014-now"}, {"source": 46, "target": 27, "caption": "2014-now"}]};
+
+    var config = {
+      backgroundColor: '#fafafa',
+      alpha: 1,
+      divSelector: '#graph',
+      initialScale: 0.3,
+      zoomControls: true,
+      nodeOverlap: 15,
+      linkDistance: function(){ return 0; },
+
+      dataSource: graph,
+      linkDistance: function(){ return 5; },
+      zoomControls: true,
+      initialScale: 0.8,
+      directedEdges: true,
+
+      edgeCaption: 'caption',
+      edgeCaptionsOnByDefault: true,
+      edgeStyle: {
+          "all": {
+            "width": 4,
+            "color": "#ccc",
+            "opacity": 0.25,
+            "directed": true,
+            "curved": true,
+            "selected": {
+              "opacity": 1
             },
-            borderWidth: 2
+            "highlighted": {
+              "opacity": 1
+            },
+            "hidden": {
+              "opacity": 0
+            }
+          }
         },
-        edges: {
-            width: 2
+
+      "nodeTypes": {"type": ["Person", "SportsTeam"]},
+      nodeCaptionsOnByDefault: true,
+      "nodeStyle": {
+        "all": {
+            radius: 15,
+            opacity: 0.5,
+        },
+        "Person": {
+            color: "#00de9d66", // green
+            borderColor: "#eee"
+        },
+        "SportsTeam":{
+            radius: 20,
+            color: "#8669a366", // purple
+            borderColor: "#eee"
         }
+      }
     };
-    network = new vis.Network(container, data, options);
-    network.on('click',(obj)=>{document.querySelector('.report').innerHTML =obj.nodes[0]})
-</script>
+
+    var alchemy = new Alchemy(config);
+
+    console.log(alchemy);
+  </script>
+</body>
+</html>
