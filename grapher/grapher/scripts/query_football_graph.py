@@ -2,6 +2,7 @@
 Ask a question for a football graph
 """
 # https://wikia-inc.atlassian.net/browse/CORE-28
+from collections import defaultdict
 import json
 import logging
 
@@ -98,6 +99,39 @@ def league_players_by_position(league, position):
     print("\n".join([str(match) for match in matches]))
 
     return matches
+
+
+def current_squad(club):
+    """
+    :type club str
+    :rtype: list[dict]
+    """
+    logging.info('Looking for %s squad', club)
+
+    query = """
+    MATCH (t:SportsTeam)-[a:athlete]->(p:Person)
+    WHERE t.name = '{club}'
+    RETURN p.name AS name, a.position AS position ,a.number AS number
+    """
+    formations = defaultdict(list)
+
+    matches = query_redis('football', query, club=club)
+
+    for match in matches:
+        # {'name': 'Nemanja Matić', 'position': 'MF', 'number': '31.000000'}
+        formations[match['position']].append({
+            'name': match['name'],
+            'number': int(float(match['number']))
+        })
+
+    # sort each formation by number
+    for name, formation in formations.items():
+        formations[name] = sorted(formation, key=lambda x: x['number'])
+
+    return {
+        # GK, DF, MF, FW
+        'formations': formations
+    }
 
 
 def matches_to_graph_json(matches, nodes_fields, edge_fields):
@@ -207,6 +241,7 @@ def index():
         ]
     )
     """
+
     graph = matches_to_graph_json(
         league_players_by_position('Premier League', 'MF'),
         nodes_fields={
@@ -220,3 +255,12 @@ def index():
     )
 
     print('\tvar graph = {};'.format(json.dumps(graph)))
+
+
+def squads():
+    """
+    Historical squads
+    """
+    squad = current_squad('Manchester United F.C.')
+
+    print('\tvar squad = {};'.format(json.dumps(squad, sort_keys=True)))
