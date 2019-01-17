@@ -1,0 +1,102 @@
+<html>
+<head>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/alchemyjs/0.4.2/alchemy-white.css"/>
+  <link href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans:300,600&amp;subset=latin-ext" rel="stylesheet">
+</head>
+<body>
+  <style>
+    body {
+      font-family: "IBM Plex Sans";
+      margin: 0;
+      padding: 0;
+    }
+
+    #field {
+        height: 855px;
+        width: 1000px;
+        margin: 20px auto;
+        background: transparent url('static/fieldbg.png') no-repeat 50% 50%;
+        position: relative;
+    }
+
+    /* lines */
+    .line {
+        position: absolute;
+        text-align: center;
+        width: 800px;
+        margin: 0 100px;
+    }
+
+    #FW {
+        margin: 0 200px;
+        width: 600px;
+    }
+
+    #GK {
+        width: 500px;
+        margin: 0 250px;
+    }
+
+    #FW { top: 50px; }
+    #MF { top: 250px; }
+    #DF { top: 475px; }
+    #GK { top: 700px; }
+
+    /* player nodes */
+    .player {
+        color: #fff;
+        display: inline-block;
+        margin: 1em;
+        background: #2d4418aa;
+        padding: 0.25em;
+        position: relative;
+        font-size: 0.85em;
+    }
+
+    h1 {
+      position: absolute;
+      left: 20px;
+      top: 20px;
+      color: #2d4418;
+      background: #2d441866;
+      border-bottom: solid 3px #2d4418a3;
+      z-index: 2;
+      margin: 0;
+      padding: 0.25em 0.5em;
+      letter-spacing: -1px;
+    }
+   </style>
+
+  <h1 id="title"></h1>
+  <div id="field">
+      <div id="FW" class="line"></div>
+      <div id="MF" class="line"></div>
+      <div id="DF" class="line"></div>
+      <div id="GK" class="line"></div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.slim.min.js"></script>
+  <script>
+	var squad = {"formations": {"DF": [{"name": "Andrew Robertson"}, {"name": "Dejan Lovren"}, {"name": "Mamadou Sakho"}, {"name": "Trent Alexander-Arnold"}], "FW": [{"name": "Ben Woodburn"}, {"name": "Sadio Man\u00e9"}], "GK": [{"name": "Loris Karius"}, {"name": "Simon Mignolet"}, {"name": "\u00c1d\u00e1m Bogd\u00e1n"}], "MF": [{"name": "Emre Can"}, {"name": "Lazar Markovi\u0107"}, {"name": "Ryan Kent"}]}, "name": "Liverpool F.C. squad (2017)"};
+
+    var field = $('#field'),
+        formations = Object.keys(squad.formations);
+
+    formations.forEach(function(formation) {
+        var players = squad.formations[formation];
+
+        console.log(formation, players);
+
+        players.forEach(function(player) {
+            $('#' + formation).append(
+                $('<div>').addClass('player').html(player.name)
+            );
+        });
+    });
+
+    $('#title').html(squad.name);
+
+    console.log(squad);
+  </script>
+
+</body>
