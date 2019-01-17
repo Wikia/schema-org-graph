@@ -4,7 +4,15 @@
 
 Map articles metadata and relationship to [schema.org entities](https://schema.org/) and stores them in [RedisGraph database](https://oss.redislabs.com/redisgraph/).
 
+## Demo
+
+* [Midfielders in Premier League](https://wikia.github.io/schema-org-graph/football.html) (with transfers)
+* [Liverpool's current squad](https://wikia.github.io/schema-org-graph/squad.html)
+* [Liverpool's squad from 2017](https://wikia.github.io/schema-org-graph/squad_history.html)
+
 ## Data
+
+![midfielders](https://user-images.githubusercontent.com/1929317/51246867-b8051480-198b-11e9-91ad-d33e3bbc12de.png)
 
 This repository contains structured data for **3133 football teams** and **4760 football players** (with focus on Premier League and Serie A). [Football Wiki](http://football.wikia.com) infoboxes (and other templates) were used as a source.
 
