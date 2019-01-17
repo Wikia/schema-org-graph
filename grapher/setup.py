@@ -26,7 +26,8 @@ setup(
     entry_points={
         'console_scripts': [
             'index_football_wiki=grapher.scripts.index_football_wiki:index',
-            'query_football_graph=grapher.scripts.query_football_graph:index'
+            'query_football_graph=grapher.scripts.query_football_graph:index',
+            'query_football_squad=grapher.scripts.query_football_graph:squads',
         ],
     }
 )

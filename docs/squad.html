@@ -1,0 +1,117 @@
+<html>
+<head>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/alchemyjs/0.4.2/alchemy-white.css"/>
+  <link href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans:300,600&amp;subset=latin-ext" rel="stylesheet">
+</head>
+<body>
+  <style>
+    body {
+      font-family: "IBM Plex Sans";
+      margin: 0;
+      padding: 0;
+    }
+
+    #field {
+        height: 855px;
+        width: 1000px;
+        margin: 20px auto;
+        background: transparent url('static/fieldbg.png') no-repeat 50% 50%;
+        position: relative;
+    }
+
+    /* lines */
+    .line {
+        position: absolute;
+        text-align: center;
+        width: 800px;
+        margin: 0 100px;
+    }
+
+    #FW {
+        margin: 0 200px;
+        width: 600px;
+    }
+
+    #GK {
+        width: 500px;
+        margin: 0 250px;
+    }
+
+    #FW { top: 50px; }
+    #MF { top: 250px; }
+    #DF { top: 475px; }
+    #GK { top: 700px; }
+
+    /* player nodes */
+    .player {
+        color: #fff;
+        display: inline-block;
+        margin: 1em;
+        background: #2d4418aa;
+        padding: 0.25em;
+        padding-right: 1.75em;
+        position: relative;
+        font-size: 0.85em;
+    }
+
+    .player sup {
+        font-weight: bold;
+        background: #fff;
+        color: black;
+        padding: 0.2em;
+        border-radius: 50%;
+        position: absolute;
+        right: -.5em;
+        top: -.5em;
+        width: 20px;
+        display: block;
+    }
+
+    h1 {
+      position: absolute;
+      left: 20px;
+      top: 20px;
+      color: #2d4418;
+      background: #2d441866;
+      border-bottom: solid 3px #2d4418a3;
+      z-index: 2;
+      margin: 0;
+      padding: 0.25em 0.5em;
+      letter-spacing: -1px;
+    }
+   </style>
+
+  <h1 id="title"></h1>
+  <div id="field">
+      <div id="FW" class="line"></div>
+      <div id="MF" class="line"></div>
+      <div id="DF" class="line"></div>
+      <div id="GK" class="line"></div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.slim.min.js"></script>
+  <script>
+	var squad = {"formations": {"DF": [{"name": "Nathaniel_Clyne", "number": 2}, {"name": "Virgil van Dijk", "number": 4}, {"name": "Dejan Lovren", "number": 6}, {"name": "Joe_Gomez", "number": 12}, {"name": "Alberto_Moreno", "number": 18}, {"name": "Andrew Robertson", "number": 26}, {"name": "Jol_Matip", "number": 32}, {"name": "Nathaniel_Phillips", "number": 47}, {"name": "Connor_Randall", "number": 56}, {"name": "Trent Alexander-Arnold", "number": 66}], "FW": [{"name": "Roberto_Firmino", "number": 9}, {"name": "Sadio Man\u00e9", "number": 10}, {"name": "Mohamed_Salah", "number": 11}, {"name": "Daniel_Sturridge", "number": 15}, {"name": "Rhian_Brewster", "number": 24}, {"name": "Divock_Origi", "number": 27}, {"name": "Danny_Ings", "number": 28}, {"name": "Ben Woodburn", "number": 58}], "GK": [{"name": "Loris Karius", "number": 1}, {"name": "Alisson_born_1992", "number": 13}, {"name": "Simon Mignolet", "number": 22}, {"name": "\u00c1d\u00e1m Bogd\u00e1n", "number": 34}, {"name": "Caoimhin_Kelleher", "number": 62}, {"name": "Kamil_Grabara", "number": 73}], "MF": [{"name": "Fabinho_born_1993", "number": 3}, {"name": "Georginio_Wijnaldum", "number": 5}, {"name": "James_Milner", "number": 7}, {"name": "Naby Ke\u00efta", "number": 8}, {"name": "Jordan_Henderson", "number": 14}, {"name": "Marko Gruji\u0107", "number": 16}, {"name": "Adam_Lallana", "number": 20}, {"name": "Alex_Oxlade_Chamberlain", "number": 21}, {"name": "Xherdan Shaqiri", "number": 23}, {"name": "Ryan Kent", "number": 40}, {"name": "Curtis_Jones_born_2001", "number": 48}, {"name": "Lazar Markovi\u0107", "number": 50}, {"name": "Ki-Jana Hoever", "number": 51}, {"name": "Ovie_Ejaria", "number": 53}, {"name": "Sheyi_Ojo", "number": 54}, {"name": "Harry_Wilson_born_1997", "number": 59}, {"name": "Rafael_Camacho", "number": 64}, {"name": "Pedro_Chirivella", "number": 68}]}, "name": "Liverpool F.C. squad (2019)"};
+
+    var field = $('#field'),
+        formations = Object.keys(squad.formations);
+
+    formations.forEach(function(formation) {
+        var players = squad.formations[formation];
+
+        console.log(formation, players);
+
+        players.forEach(function(player) {
+            $('#' + formation).append(
+                $('<div>').addClass('player').html(player.name).
+                    append($('<sup>').html(player.number))
+            );
+        });
+    });
+
+    $('#title').html(squad.name);
+
+    console.log(squad);
+  </script>
+
+</body>

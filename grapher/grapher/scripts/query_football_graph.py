@@ -2,6 +2,7 @@
 Ask a question for a football graph
 """
 # https://wikia-inc.atlassian.net/browse/CORE-28
+from collections import defaultdict
 import json
 import logging
 
@@ -98,6 +99,85 @@ def league_players_by_position(league, position):
     print("\n".join([str(match) for match in matches]))
 
     return matches
+
+
+def current_squad(club):
+    """
+    :type club str
+    :rtype: list[dict]
+    """
+    logging.info('Looking for %s squad', club)
+
+    query = """
+    MATCH (t:SportsTeam)-[a:athlete]->(p:Person)
+    WHERE t.name = '{club}'
+    RETURN p.name AS name, a.position AS position ,a.number AS number
+    """
+    formations = defaultdict(list)
+
+    matches = query_redis('football', query, club=club)
+
+    for match in matches:
+        # {'name': 'Nemanja Matić', 'position': 'MF', 'number': '31.000000'}
+        formations[match['position']].append({
+            'name': match['name'],
+            'number': int(float(match['number']))
+        })
+
+    # sort each formation by number
+    for name, formation in formations.items():
+        formations[name] = sorted(formation, key=lambda x: x['number'])
+
+    return {
+        'name': '{} squad (2019)'.format(club),
+        # GK, DF, MF, FW
+        'formations': formations
+    }
+
+
+def historical_squad(club, year):
+    """
+    :type club str
+    :type year int
+    :rtype: list[dict]
+    """
+    logging.info('Looking for %s squad in year %d', club, year)
+
+    # https://neo4j.com/docs/cypher-manual/current/syntax/operators/#query-operators-comparison
+    query = """
+    MATCH (:SportsTeam)-[a:athlete]->(p:Person)-[hist:athlete]->(t:SportsTeam)
+    WHERE t.name = '{club}' AND hist.since <= {year}
+    RETURN p.name AS name, a.position AS position, hist.since, hist.until
+    """
+    formations = defaultdict(list)
+
+    matches = query_redis('football', query, club=club, year=year)
+
+    # print(list(matches))
+
+    for match in matches:
+        # {'name': 'Nemanja Matić', 'position': 'MF', 'number': '31.000000'}
+
+        # redisgraph does not seem to support "IS NULL" operator
+        # check this in the code
+        until = int(float(match['hist.until'])) if match['hist.until'] != 'NULL' else False
+
+        logging.info('%s - until %d', match['name'], until)
+
+        if not until or until >= year:
+            formations[match['position']].append({
+                'name': match['name']
+            })
+
+    # sort each formation by number
+    for name, formation in formations.items():
+        formations[name] = sorted(formation, key=lambda x: x['name'])
+
+    return {
+        'name': '{} squad ({})'.format(club, year),
+        # GK, DF, MF, FW
+        'formations': formations
+    }
 
 
 def matches_to_graph_json(matches, nodes_fields, edge_fields):
@@ -207,6 +287,7 @@ def index():
         ]
     )
     """
+
     graph = matches_to_graph_json(
         league_players_by_position('Premier League', 'MF'),
         nodes_fields={
@@ -220,3 +301,14 @@ def index():
     )
 
     print('\tvar graph = {};'.format(json.dumps(graph)))
+
+
+def squads():
+    """
+    Historical squads
+    """
+    # squad = current_squad('Manchester United F.C.')
+    # squad = current_squad('Liverpool F.C.')
+    squad = historical_squad('Liverpool F.C.', year=2017)
+
+    print('\tvar squad = {};'.format(json.dumps(squad, sort_keys=True)))
