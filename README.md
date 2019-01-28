@@ -7,6 +7,7 @@ Map articles metadata and relationship to [schema.org entities](https://schema.o
 ## Demo
 
 * [Midfielders in Premier League](https://wikia.github.io/schema-org-graph/football.html) (with transfers)
+* [German players in Premier League](https://wikia.github.io/schema-org-graph/germany.html) (with transfers)
 * [Liverpool's current squad](https://wikia.github.io/schema-org-graph/squad.html)
 * [Liverpool's squad from 2017](https://wikia.github.io/schema-org-graph/squad_history.html)
 
