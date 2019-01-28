@@ -1,0 +1,122 @@
+<html>
+<head>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/alchemyjs/0.4.2/alchemy-white.css"/>
+  <link href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans:300,600&amp;subset=latin-ext" rel="stylesheet">
+</head>
+<body>
+  <h1 id="title">Midfielders in Premier League</h1>
+  <div class="alchemy" id="graph"></div>
+
+  <style>
+    body {
+      font-family: "IBM Plex Sans";
+      margin: 0;
+      padding: 0;
+    }
+
+    h1 {
+      position: absolute;
+      left: 20px;
+      top: 20px;
+      color: #8669a3;
+      background: #8669a366;
+      border-bottom: solid 3px #8669a3;
+      z-index: 2;
+      margin: 0;
+      padding: 0.25em 0.5em;
+    }
+
+    /* Show Captions */
+    .node text {
+      font-size: 15px;
+      fill: #666;
+      text-shadow: none;
+    }
+    .SportsTeam text {
+      fill: #8669a3;
+      font-size: 20px;
+      font-weight: bold;
+      letter-spacing: -1px;
+    }
+
+    .edge.active text {
+      font-size: 10px;
+      fill: #999;
+      text-shadow: none !important;
+      font-weight: bold;
+    }
+
+    .edge text {
+      display: block !important;
+    }
+  </style>
+
+  <!-- https://cdnjs.cloudflare.com/ajax/libs/alchemyjs/0.4.2/alchemy.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/alchemyjs/0.4.2/scripts/vendor.js"></script>
+  <script src="static/alchemy.js"></script>
+
+  <script type="text/javascript">
+
+	var graph = {"nodes": [{"id": 0, "caption": "Arsenal F.C.", "type": "SportsTeam"}, {"id": 1, "caption": "Shkodran Mustafi", "type": "Person"}, {"id": 2, "caption": "Serge David Gnabry", "type": "Person"}, {"id": 3, "caption": "Sead Kola\u0161inac", "type": "Person"}, {"id": 4, "caption": "Per Mertesacker", "type": "Person"}, {"id": 5, "caption": "Mesut \u00d6zil", "type": "Person"}, {"id": 6, "caption": "Jens Gerhard Lehmann", "type": "Person"}, {"id": 7, "caption": "Bernd Leno", "type": "Person"}, {"id": 8, "caption": "Alberto M\u00e9ndez Rodr\u00edguez", "type": "Person"}, {"id": 9, "caption": "Manchester City F.C.", "type": "SportsTeam"}, {"id": 10, "caption": "\u0130lkay G\u00fcndo\u011fan", "type": "Person"}, {"id": 11, "caption": "Leroy San\u00e9", "type": "Person"}, {"id": 12, "caption": "J\u00e9r\u00f4me Agyenim Boateng", "type": "Person"}, {"id": 13, "caption": "Tottenham Hotspur F.C.", "type": "SportsTeam"}, {"id": 14, "caption": "Kevin-Prince Boateng", "type": "Person"}, {"id": 15, "caption": "Leicester City F.C.", "type": "SportsTeam"}, {"id": 16, "caption": "Robert Huth", "type": "Person"}, {"id": 17, "caption": "Jeffrey Schlupp", "type": "Person"}, {"id": 18, "caption": "Manchester United F.C.", "type": "SportsTeam"}, {"id": 19, "caption": "Bastian Schweinsteiger", "type": "Person"}, {"id": 20, "caption": "Chelsea F.C.", "type": "SportsTeam"}, {"id": 21, "caption": "Michael Ballack", "type": "Person"}, {"id": 22, "caption": "Antonio R\u00fcdiger", "type": "Person"}, {"id": 23, "caption": "Andr\u00e9 Horst Sch\u00fcrrle", "type": "Person"}, {"id": 24, "caption": "Liverpool F.C.", "type": "SportsTeam"}, {"id": 25, "caption": "Samed Ye\u015fil", "type": "Person"}, {"id": 26, "caption": "Nuri \u015eahin", "type": "Person"}, {"id": 27, "caption": "Loris Karius", "type": "Person"}, {"id": 28, "caption": "Emre Can", "type": "Person"}, {"id": 29, "caption": "Crystal Palace F.C.", "type": "SportsTeam"}, {"id": 30, "caption": "Everton F.C.", "type": "SportsTeam"}, {"id": 31, "caption": "Muhamed Be\u0161i\u0107", "type": "Person"}, {"id": 32, "caption": "Southampton F.C.", "type": "SportsTeam"}, {"id": 33, "caption": "Maik Stefan Taylor", "type": "Person"}, {"id": 34, "caption": "C\u00e9dric Ricardo Alves Soares", "type": "Person"}, {"id": 35, "caption": "Burnley F.C.", "type": "SportsTeam"}, {"id": 36, "caption": "Rouwen Hennings", "type": "Person"}], "edges": [{"source": 1, "target": 0, "caption": "2016-now"}, {"source": 2, "target": 0, "caption": "2012-2016"}, {"source": 3, "target": 0, "caption": "2017-now"}, {"source": 4, "target": 0, "caption": "2011-2018"}, {"source": 5, "target": 0, "caption": "2013-now"}, {"source": 6, "target": 0, "caption": "2003-2008"}, {"source": 7, "target": 0, "caption": "2018-now"}, {"source": 8, "target": 0, "caption": "1997-2002"}, {"source": 10, "target": 9, "caption": "2016-now"}, {"source": 11, "target": 9, "caption": "2016-now"}, {"source": 12, "target": 9, "caption": "2010-2011"}, {"source": 14, "target": 13, "caption": "2007-2009"}, {"source": 16, "target": 15, "caption": "2015-2015"}, {"source": 17, "target": 15, "caption": "2010-2017"}, {"source": 19, "target": 18, "caption": "2015-2017"}, {"source": 16, "target": 20, "caption": "2002-2006"}, {"source": 21, "target": 20, "caption": "2006-2010"}, {"source": 22, "target": 20, "caption": "2017-now"}, {"source": 23, "target": 20, "caption": "2013-2015"}, {"source": 25, "target": 24, "caption": "2012-now"}, {"source": 26, "target": 24, "caption": "2012-2013"}, {"source": 27, "target": 24, "caption": "2016-now"}, {"source": 28, "target": 24, "caption": "2014-2018"}, {"source": 17, "target": 29, "caption": "2017-now"}, {"source": 1, "target": 30, "caption": "2009-2011"}, {"source": 31, "target": 30, "caption": "2014-now"}, {"source": 33, "target": 32, "caption": "1992-1995"}, {"source": 34, "target": 32, "caption": "2015-now"}, {"source": 36, "target": 35, "caption": "2015-now"}]};
+
+    var config = {
+      backgroundColor: '#fafafa',
+      alpha: 1,
+      divSelector: '#graph',
+      initialScale: 0.3,
+      zoomControls: true,
+      nodeOverlap: 15,
+      linkDistance: function(){ return 0; },
+
+      dataSource: graph,
+      linkDistance: function(){ return 5; },
+      zoomControls: true,
+      initialScale: 0.8,
+      directedEdges: true,
+
+      edgeCaption: 'caption',
+      edgeCaptionsOnByDefault: true,
+      edgeStyle: {
+          "all": {
+            "width": 4,
+            "color": "#ccc",
+            "opacity": 0.25,
+            "directed": true,
+            "curved": true,
+            "selected": {
+              "opacity": 1
+            },
+            "highlighted": {
+              "opacity": 1
+            },
+            "hidden": {
+              "opacity": 0
+            }
+          }
+        },
+
+      "nodeTypes": {"type": ["Person", "SportsTeam"]},
+      nodeCaptionsOnByDefault: true,
+      "nodeStyle": {
+        "all": {
+            radius: 15,
+            opacity: 0.5,
+        },
+        "Person": {
+            color: "#00de9d66", // green
+            borderColor: "#eee"
+        },
+        "SportsTeam":{
+            radius: 20,
+            color: "#8669a366", // purple
+            borderColor: "#eee"
+        }
+      }
+    };
+
+    var alchemy = new Alchemy(config);
+
+    console.log(alchemy);
+  </script>
+</body>
+</html>
