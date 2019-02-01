@@ -54,6 +54,23 @@ def nationalities_in_league(nationality, league):
     return matches
 
 
+def all_players_and_teams():
+    """
+    :rtype: list[dict]
+    """
+    query = """
+    MATCH (t:SportsTeam)<-[a]-(p:Person)
+    RETURN t.name,p.name
+    """
+
+    matches = query_redis('football', query)
+    matches = list(matches)
+
+    print("\n".join([str(match) for match in matches]))
+
+    return matches
+
+
 def players_in_two_clubs(club_a, club_b):
     """
     :type club_a str
@@ -261,18 +278,31 @@ def index():
 
     """
     graph = matches_to_graph_json(
-        nationalities_in_league('Iceland', 'Premier League'),
-        # nationalities_in_league('Germany', 'Premier League')
+        all_players_and_teams(),
         nodes_fields={
             't.name': 'SportsTeam',
             'p.name': 'Person',
         },
         edge_fields=[
             # athletee relation will connect p.name -> t.name nodes
-            ['athletee', ('p.name', 't.name', years_played()]
+            ['athletee', ('p.name', 't.name', None)]
         ]
     )
 
+    """
+    graph = matches_to_graph_json(
+        # nationalities_in_league('Iceland', 'Premier League'),
+        nationalities_in_league('Germany', 'Premier League'),
+        nodes_fields={
+            't.name': 'SportsTeam',
+            'p.name': 'Person',
+        },
+        edge_fields=[
+            # athletee relation will connect p.name -> t.name nodes
+            ['athletee', ('p.name', 't.name', years_played('a'))]
+        ]
+    )
+    """
     graph = matches_to_graph_json(
         players_in_two_clubs('Liverpool F.C.', 'Manchester United F.C.'),
         nodes_fields={
@@ -286,7 +316,6 @@ def index():
             ['athletee', ('p.name', 't2.name', years_played('a2'))],
         ]
     )
-    """
 
     graph = matches_to_graph_json(
         league_players_by_position('Premier League', 'MF'),
@@ -299,7 +328,7 @@ def index():
             ['athletee', ('p.name', 't.name', years_played())],
         ]
     )
-
+    """
     print('\tvar graph = {};'.format(json.dumps(graph)))
 
 
